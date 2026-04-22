@@ -1,0 +1,1278 @@
+﻿{
+    "version":  "v1",
+    "created_at":  "2026-04-22",
+    "owner_profile":  "personal_swing",
+    "selection_policy":  "Top-50 snapshot per segment with monthly review",
+    "rebalance_policy":  {
+                             "cadence":  "monthly",
+                             "review_day":  "first_saturday",
+                             "notes":  "Replace symbols that fall out of top-liquidity/top-market-cap criteria."
+                         },
+    "segments":  {
+                     "sp500_top50":  {
+                                         "count":  50,
+                                         "quote_currency":  "USD"
+                                     },
+                     "nse_top50":  {
+                                       "count":  50,
+                                       "quote_currency":  "INR"
+                                   },
+                     "crypto_top50":  {
+                                          "count":  50,
+                                          "quote_currency":  "USD"
+                                      }
+                 },
+    "total_symbols":  150,
+    "symbols":  [
+                    {
+                        "symbol":  "AAPL",
+                        "selection_rank":  1,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "MSFT",
+                        "selection_rank":  2,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "NVDA",
+                        "selection_rank":  3,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "AMZN",
+                        "selection_rank":  4,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "GOOGL",
+                        "selection_rank":  5,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "GOOG",
+                        "selection_rank":  6,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "META",
+                        "selection_rank":  7,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "BRK.B",
+                        "selection_rank":  8,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "AVGO",
+                        "selection_rank":  9,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "JPM",
+                        "selection_rank":  10,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "LLY",
+                        "selection_rank":  11,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "V",
+                        "selection_rank":  12,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "XOM",
+                        "selection_rank":  13,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "MA",
+                        "selection_rank":  14,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "UNH",
+                        "selection_rank":  15,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "COST",
+                        "selection_rank":  16,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "JNJ",
+                        "selection_rank":  17,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "WMT",
+                        "selection_rank":  18,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "PG",
+                        "selection_rank":  19,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "HD",
+                        "selection_rank":  20,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "ORCL",
+                        "selection_rank":  21,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "BAC",
+                        "selection_rank":  22,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "MRK",
+                        "selection_rank":  23,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "CVX",
+                        "selection_rank":  24,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "KO",
+                        "selection_rank":  25,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "ABBV",
+                        "selection_rank":  26,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "CRM",
+                        "selection_rank":  27,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "NFLX",
+                        "selection_rank":  28,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "TMO",
+                        "selection_rank":  29,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "ACN",
+                        "selection_rank":  30,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "PEP",
+                        "selection_rank":  31,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "CSCO",
+                        "selection_rank":  32,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "ADBE",
+                        "selection_rank":  33,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "DIS",
+                        "selection_rank":  34,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "AMD",
+                        "selection_rank":  35,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "MCD",
+                        "selection_rank":  36,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "LIN",
+                        "selection_rank":  37,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "PM",
+                        "selection_rank":  38,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "DHR",
+                        "selection_rank":  39,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "TXN",
+                        "selection_rank":  40,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "ABT",
+                        "selection_rank":  41,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "CAT",
+                        "selection_rank":  42,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "IBM",
+                        "selection_rank":  43,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "GE",
+                        "selection_rank":  44,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "INTU",
+                        "selection_rank":  45,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "QCOM",
+                        "selection_rank":  46,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "AMGN",
+                        "selection_rank":  47,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "NEE",
+                        "selection_rank":  48,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "RTX",
+                        "selection_rank":  49,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "SPGI",
+                        "selection_rank":  50,
+                        "segment":  "sp500_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "US",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "ADANIENT.NS",
+                        "selection_rank":  1,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "ADANIPORTS.NS",
+                        "selection_rank":  2,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "APOLLOHOSP.NS",
+                        "selection_rank":  3,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "ASIANPAINT.NS",
+                        "selection_rank":  4,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "AXISBANK.NS",
+                        "selection_rank":  5,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "BAJAJ-AUTO.NS",
+                        "selection_rank":  6,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "BAJFINANCE.NS",
+                        "selection_rank":  7,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "BAJAJFINSV.NS",
+                        "selection_rank":  8,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "BEL.NS",
+                        "selection_rank":  9,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "BHARTIARTL.NS",
+                        "selection_rank":  10,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "BPCL.NS",
+                        "selection_rank":  11,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "BRITANNIA.NS",
+                        "selection_rank":  12,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "CIPLA.NS",
+                        "selection_rank":  13,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "COALINDIA.NS",
+                        "selection_rank":  14,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "DRREDDY.NS",
+                        "selection_rank":  15,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "EICHERMOT.NS",
+                        "selection_rank":  16,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "GRASIM.NS",
+                        "selection_rank":  17,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "HCLTECH.NS",
+                        "selection_rank":  18,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "HDFCBANK.NS",
+                        "selection_rank":  19,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "HDFCLIFE.NS",
+                        "selection_rank":  20,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "HEROMOTOCO.NS",
+                        "selection_rank":  21,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "HINDALCO.NS",
+                        "selection_rank":  22,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "HINDUNILVR.NS",
+                        "selection_rank":  23,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "ICICIBANK.NS",
+                        "selection_rank":  24,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "INDUSINDBK.NS",
+                        "selection_rank":  25,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "INFY.NS",
+                        "selection_rank":  26,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "ITC.NS",
+                        "selection_rank":  27,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "JIOFIN.NS",
+                        "selection_rank":  28,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "JSWSTEEL.NS",
+                        "selection_rank":  29,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "KOTAKBANK.NS",
+                        "selection_rank":  30,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "LT.NS",
+                        "selection_rank":  31,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "M\u0026M.NS",
+                        "selection_rank":  32,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "MARUTI.NS",
+                        "selection_rank":  33,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "NESTLEIND.NS",
+                        "selection_rank":  34,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "NTPC.NS",
+                        "selection_rank":  35,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "ONGC.NS",
+                        "selection_rank":  36,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "POWERGRID.NS",
+                        "selection_rank":  37,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "RELIANCE.NS",
+                        "selection_rank":  38,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "SBILIFE.NS",
+                        "selection_rank":  39,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "SBIN.NS",
+                        "selection_rank":  40,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "SUNPHARMA.NS",
+                        "selection_rank":  41,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "TATACONSUM.NS",
+                        "selection_rank":  42,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "TATAMOTORS.NS",
+                        "selection_rank":  43,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "TATASTEEL.NS",
+                        "selection_rank":  44,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "TCS.NS",
+                        "selection_rank":  45,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "TECHM.NS",
+                        "selection_rank":  46,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "TITAN.NS",
+                        "selection_rank":  47,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "TRENT.NS",
+                        "selection_rank":  48,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "ULTRACEMCO.NS",
+                        "selection_rank":  49,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "WIPRO.NS",
+                        "selection_rank":  50,
+                        "segment":  "nse_top50",
+                        "asset_type":  "equity",
+                        "exchange":  "NSE",
+                        "quote_currency":  "INR"
+                    },
+                    {
+                        "symbol":  "BTC",
+                        "coingecko_id":  "bitcoin",
+                        "selection_rank":  1,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "ETH",
+                        "coingecko_id":  "ethereum",
+                        "selection_rank":  2,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "USDT",
+                        "coingecko_id":  "tether",
+                        "selection_rank":  3,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "XRP",
+                        "coingecko_id":  "ripple",
+                        "selection_rank":  4,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "BNB",
+                        "coingecko_id":  "binancecoin",
+                        "selection_rank":  5,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "SOL",
+                        "coingecko_id":  "solana",
+                        "selection_rank":  6,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "USDC",
+                        "coingecko_id":  "usd-coin",
+                        "selection_rank":  7,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "DOGE",
+                        "coingecko_id":  "dogecoin",
+                        "selection_rank":  8,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "ADA",
+                        "coingecko_id":  "cardano",
+                        "selection_rank":  9,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "TRX",
+                        "coingecko_id":  "tron",
+                        "selection_rank":  10,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "AVAX",
+                        "coingecko_id":  "avalanche-2",
+                        "selection_rank":  11,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "SHIB",
+                        "coingecko_id":  "shiba-inu",
+                        "selection_rank":  12,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "TON",
+                        "coingecko_id":  "toncoin",
+                        "selection_rank":  13,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "LINK",
+                        "coingecko_id":  "chainlink",
+                        "selection_rank":  14,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "BCH",
+                        "coingecko_id":  "bitcoin-cash",
+                        "selection_rank":  15,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "SUI",
+                        "coingecko_id":  "sui",
+                        "selection_rank":  16,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "LTC",
+                        "coingecko_id":  "litecoin",
+                        "selection_rank":  17,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "HBAR",
+                        "coingecko_id":  "hedera-hashgraph",
+                        "selection_rank":  18,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "XLM",
+                        "coingecko_id":  "stellar",
+                        "selection_rank":  19,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "DOT",
+                        "coingecko_id":  "polkadot",
+                        "selection_rank":  20,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "WBTC",
+                        "coingecko_id":  "wrapped-bitcoin",
+                        "selection_rank":  21,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "UNI",
+                        "coingecko_id":  "uniswap",
+                        "selection_rank":  22,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "APT",
+                        "coingecko_id":  "aptos",
+                        "selection_rank":  23,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "NEAR",
+                        "coingecko_id":  "near",
+                        "selection_rank":  24,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "ICP",
+                        "coingecko_id":  "internet-computer",
+                        "selection_rank":  25,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "DAI",
+                        "coingecko_id":  "dai",
+                        "selection_rank":  26,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "KAS",
+                        "coingecko_id":  "kaspa",
+                        "selection_rank":  27,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "PEPE",
+                        "coingecko_id":  "pepe",
+                        "selection_rank":  28,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "RENDER",
+                        "coingecko_id":  "render-token",
+                        "selection_rank":  29,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "VET",
+                        "coingecko_id":  "vechain",
+                        "selection_rank":  30,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "FIL",
+                        "coingecko_id":  "filecoin",
+                        "selection_rank":  31,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "AAVE",
+                        "coingecko_id":  "aave",
+                        "selection_rank":  32,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "ATOM",
+                        "coingecko_id":  "cosmos",
+                        "selection_rank":  33,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "ARB",
+                        "coingecko_id":  "arbitrum",
+                        "selection_rank":  34,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "OP",
+                        "coingecko_id":  "optimism",
+                        "selection_rank":  35,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "IMX",
+                        "coingecko_id":  "immutable-x",
+                        "selection_rank":  36,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "MKR",
+                        "coingecko_id":  "maker",
+                        "selection_rank":  37,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "XMR",
+                        "coingecko_id":  "monero",
+                        "selection_rank":  38,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "INJ",
+                        "coingecko_id":  "injective-protocol",
+                        "selection_rank":  39,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "SEI",
+                        "coingecko_id":  "sei-network",
+                        "selection_rank":  40,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "GRT",
+                        "coingecko_id":  "the-graph",
+                        "selection_rank":  41,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "ALGO",
+                        "coingecko_id":  "algorand",
+                        "selection_rank":  42,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "LDO",
+                        "coingecko_id":  "lido-dao",
+                        "selection_rank":  43,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "FTM",
+                        "coingecko_id":  "fantom",
+                        "selection_rank":  44,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "THETA",
+                        "coingecko_id":  "theta-token",
+                        "selection_rank":  45,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "EOS",
+                        "coingecko_id":  "eos",
+                        "selection_rank":  46,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "FLOW",
+                        "coingecko_id":  "flow",
+                        "selection_rank":  47,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "HNT",
+                        "coingecko_id":  "helium",
+                        "selection_rank":  48,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "CRV",
+                        "coingecko_id":  "curve-dao-token",
+                        "selection_rank":  49,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    },
+                    {
+                        "symbol":  "SAND",
+                        "coingecko_id":  "the-sandbox",
+                        "selection_rank":  50,
+                        "segment":  "crypto_top50",
+                        "asset_type":  "crypto",
+                        "exchange":  "GLOBAL",
+                        "quote_currency":  "USD"
+                    }
+                ]
+}

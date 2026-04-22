@@ -1,0 +1,25 @@
+{
+  "name": "market-screener-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start --port 3000",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "14.2.26",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.15.3",
+    "@types/react": "18.3.20",
+    "@types/react-dom": "18.3.6",
+    "eslint": "8.57.1",
+    "eslint-config-next": "14.2.26",
+    "typescript": "5.8.3"
+  }
+}
