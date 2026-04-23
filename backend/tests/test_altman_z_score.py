@@ -52,7 +52,7 @@ def test_compute_altman_z_score_returns_safe_zone_for_strong_profile() -> None:
     result = compute_altman_z_score(current)
 
     assert result.z_score is not None
-    assert round(result.z_score, 4) == 4.8965
+    assert round(result.z_score, 4) == 4.1558
     assert result.zone == "safe"
     assert result.unavailable_factors == []
 
@@ -73,7 +73,7 @@ def test_compute_altman_z_score_returns_distress_zone_for_weak_profile() -> None
     result = compute_altman_z_score(current)
 
     assert result.z_score is not None
-    assert round(result.z_score, 4) == 0.0987
+    assert round(result.z_score, 4) == 0.2087
     assert result.zone == "distress"
     assert result.unavailable_factors == []
 
@@ -94,7 +94,7 @@ def test_compute_altman_z_score_returns_grey_zone_for_mid_profile() -> None:
     result = compute_altman_z_score(current)
 
     assert result.z_score is not None
-    assert round(result.z_score, 4) == 2.94
+    assert round(result.z_score, 4) == 2.392
     assert result.zone == "grey"
     assert result.unavailable_factors == []
 

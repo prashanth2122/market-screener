@@ -914,3 +914,283 @@
 - `backend/README.md`
 - `scripts/README.md`
 - `docs/EXECUTION_LOG.md`
+
+## Day 54 - 23 April 2026
+
+- Implemented Altman Z-score core computation logic using period fundamentals inputs.
+- Added full component-level diagnostics (working-capital/assets, retained-earnings/assets, EBIT/assets, market-value/liabilities, sales/assets).
+- Added Altman zone mapping (`distress`, `grey`, `safe`) with explicit handling for unavailable inputs.
+- Added Day 54 utility script and tests covering safe/grey/distress cases, missing-data handling, and series ordering behavior.
+
+### Artifacts
+
+- `backend/src/market_screener/core/altman.py`
+- `backend/tests/test_altman_z_score.py`
+- `scripts/dev/run_altman_z_score_calculation.ps1`
+- `backend/README.md`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 55 - 23 April 2026
+
+- Implemented EPS/revenue growth metrics core computation logic using current and prior fundamentals periods.
+- Added deterministic EPS basis selection (`diluted` preferred when available for both periods, otherwise `basic`) to keep growth comparisons consistent.
+- Added growth diagnostics and unavailable-metric reporting for missing/invalid denominator cases.
+- Added Day 55 utility script and tests covering positive growth, EPS basis fallback, unavailable handling, negative-base behavior, and series ordering behavior.
+
+### Artifacts
+
+- `backend/src/market_screener/core/growth_metrics.py`
+- `backend/tests/test_growth_metrics.py`
+- `scripts/dev/run_growth_metrics_calculation.ps1`
+- `backend/README.md`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 56 - 23 April 2026
+
+- Implemented fundamentals quality normalization logic that converts core fundamentals dimensions to a single 0-100 score.
+- Added weighted component scoring for Piotroski, Altman, growth, ROE, and debt-discipline with explicit unavailable-component handling.
+- Added automatic effective-weight re-scaling when some inputs are missing to keep scores interpretable from available data only.
+- Added Day 56 utility script and unit tests covering normalization math, clamping behavior, fallback rules, missing-data handling, and series ordering.
+
+### Artifacts
+
+- `backend/src/market_screener/core/fundamentals_quality.py`
+- `backend/tests/test_fundamentals_quality_normalization.py`
+- `scripts/dev/run_fundamentals_quality_normalization.ps1`
+- `backend/README.md`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 57 - 23 April 2026
+
+- Implemented Marketaux news API client wrapper with retry, quota guard, and provider error/schema mapping behavior.
+- Added `news_events` storage model and migration for persisted article payloads including sentiment stub fields and risk-tag placeholders.
+- Implemented news ingestion job that fetches recent articles for active symbols, normalizes payloads, writes deduplicated rows, and tracks audit/idempotency metadata.
+- Added Day 57 utility script and tests for provider behavior, schema constraints, and DB-backed ingestion workflow.
+
+### Artifacts
+
+- `backend/src/market_screener/providers/marketaux.py`
+- `backend/src/market_screener/providers/__init__.py`
+- `backend/src/market_screener/jobs/news_ingestion.py`
+- `backend/src/market_screener/jobs/__init__.py`
+- `backend/src/market_screener/db/models/core.py`
+- `backend/src/market_screener/db/models/__init__.py`
+- `backend/migrations/versions/20260423_07_news_events.py`
+- `backend/src/market_screener/core/settings.py`
+- `backend/tests/test_marketaux_news_client.py`
+- `backend/tests/test_news_events_schema.py`
+- `backend/tests/test_news_ingestion_job.py`
+- `backend/tests/test_settings_management.py`
+- `scripts/dev/run_news_ingestion.ps1`
+- `.env.example`
+- `docs/env_reference.md`
+- `backend/README.md`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 58 - 23 April 2026
+
+- Implemented sentiment scoring core helpers for lexicon sentiment extraction, provider+lexicon blending, and time-decayed weighted aggregation over the last 72 hours.
+- Implemented sentiment scoring pipeline job that processes recent `news_events`, backfills missing article sentiment scores, and computes per-asset weighted sentiment outputs.
+- Added audit/idempotency-wired runtime wrapper for repeat-safe hourly scoring windows.
+- Added Day 58 utility script and unit tests covering core sentiment math, pipeline behavior, and settings overrides.
+
+### Artifacts
+
+- `backend/src/market_screener/core/sentiment.py`
+- `backend/src/market_screener/jobs/sentiment_scoring.py`
+- `backend/src/market_screener/jobs/__init__.py`
+- `backend/src/market_screener/core/settings.py`
+- `backend/tests/test_sentiment_core.py`
+- `backend/tests/test_sentiment_scoring_job.py`
+- `backend/tests/test_settings_management.py`
+- `scripts/dev/run_sentiment_scoring_pipeline.ps1`
+- `.env.example`
+- `docs/env_reference.md`
+- `backend/README.md`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 59 - 23 April 2026
+
+- Implemented rule-based event risk tagging logic that maps article content into event categories with priority ordering.
+- Added sentiment-threshold risk fallback to capture negative-shock articles even when no explicit risk keywords are present.
+- Implemented event-risk tagging pipeline job that processes recent `news_events`, updates `event_type` and `risk_flag`, and stores rule-hit diagnostics.
+- Added audit/idempotency wiring, Day 59 utility script, and tests for both core rule behavior and DB-backed tagging workflow.
+
+### Artifacts
+
+- `backend/src/market_screener/core/event_risk.py`
+- `backend/src/market_screener/jobs/event_risk_tagging.py`
+- `backend/src/market_screener/jobs/__init__.py`
+- `backend/src/market_screener/core/settings.py`
+- `backend/tests/test_event_risk_rules.py`
+- `backend/tests/test_event_risk_tagging_job.py`
+- `backend/tests/test_settings_management.py`
+- `scripts/dev/run_event_risk_tagging_rules.ps1`
+- `.env.example`
+- `docs/env_reference.md`
+- `backend/README.md`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 60 - 23 April 2026
+
+- Added integration tests that validate sentiment scoring and event-risk tagging pipelines in a combined workflow.
+- Added coverage for sentiment-backfilled articles becoming `sentiment_shock` risk events when negative-threshold criteria are met.
+- Added coverage for keyword-driven event-risk tagging precedence even when article sentiment context is positive.
+- Added Day 60 utility script to run the full sentiment+risk test suite in one command.
+
+### Artifacts
+
+- `backend/tests/test_sentiment_event_risk_pipeline.py`
+- `scripts/dev/run_sentiment_risk_pipeline_tests.ps1`
+- `backend/README.md`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 61 - 23 April 2026
+
+- Implemented score model configuration constants with explicit v1 component weights (`technical` 45%, `fundamental` 35%, `sentiment+risk` 20%).
+- Added deterministic factor-transform helpers for technical context (trend regime, breakout signal, relative volume), fundamentals score clamping, and sentiment/event-risk penalty handling.
+- Added Day 61 tests covering component weight normalization, bullish/bearish technical transform behavior, missing-factor reweighting, and sentiment-risk penalty/fallback paths.
+- Added Day 61 utility script for one-command transform checks and smoke output.
+
+### Artifacts
+
+- `backend/src/market_screener/core/score_factors.py`
+- `backend/tests/test_score_factor_transforms.py`
+- `scripts/dev/run_score_factor_transform_checks.ps1`
+- `.vscode/launch.json`
+- `backend/README.md`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 62 - 23 April 2026
+
+- Implemented composite score engine v1 that combines technical, fundamental, and sentiment+risk components into a single 0-100 score.
+- Added component-level reweighting when one or more components are unavailable, preserving deterministic output from available signals only.
+- Added diagnostics payload fields including per-component scores, per-component weighted contributions, and unavailable-component reporting.
+- Added Day 62 tests for weighted output behavior, missing-component reweighting, custom weights, risk-penalty impact, and invalid-weight guards.
+- Added Day 62 utility script for one-command composite score test+smoke execution.
+
+### Artifacts
+
+- `backend/src/market_screener/core/composite_score.py`
+- `backend/tests/test_composite_score_engine.py`
+- `scripts/dev/run_composite_score_engine_v1.ps1`
+- `.vscode/launch.json`
+- `backend/README.md`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 63 - 23 April 2026
+
+- Added per-asset score explanation payload builder on top of composite score outputs.
+- Included payload sections for summary text, score band, confidence, component breakdown, positive/negative driver lists, risk context, and data gaps.
+- Added rationale generation for each component (technical/fundamental/sentiment-risk) to support UI/API explainability.
+- Added Day 63 tests for payload shape, rationale presence, missing-data gaps, unavailable-score behavior, risk-penalty context, and driver list limits.
+- Added Day 63 utility script for one-command explanation payload test+smoke execution.
+
+### Artifacts
+
+- `backend/src/market_screener/core/score_explanation.py`
+- `backend/tests/test_score_explanation_payload.py`
+- `scripts/dev/run_score_explanation_payload_checks.ps1`
+- `.vscode/launch.json`
+- `backend/README.md`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 64 - 23 April 2026
+
+- Implemented signal mapping rules that convert composite score outputs into `Strong Buy`, `Buy`, `Watch`, and `Avoid` buckets.
+- Added deterministic guardrails for risk handling: severe event-risk overrides force `Avoid`, while mild risk events trigger one-step downgrades.
+- Added confidence and data-coverage downgrade rules to reduce false-positive high-conviction signals under weak evidence.
+- Added score-explanation payload integration helper to map signals directly from Day 63 explanation responses.
+- Added Day 64 tests for all signal buckets, risk overrides/downgrades, missing-score handling, and explanation-to-signal mapping consistency.
+- Added Day 64 utility script for one-command signal mapping test+smoke execution.
+
+### Artifacts
+
+- `backend/src/market_screener/core/signal_mapping.py`
+- `backend/tests/test_signal_mapping_rules.py`
+- `scripts/dev/run_signal_mapping_rules_checks.ps1`
+- `.vscode/launch.json`
+- `backend/README.md`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 65 - 23 April 2026
+
+- Added dedicated score and signal history persistence schema for storing time-series snapshots of model outputs.
+- Created migration adding `score_history` and `signal_history` tables with asset/time/model-version uniqueness constraints.
+- Added indexes for fast time-window reads by asset and model/signal dimensions to support upcoming backfill and validation workflows.
+- Added ORM models for score/signal history entities and registered them for Alembic metadata discovery.
+- Added Day 65 schema tests covering field persistence, uniqueness enforcement, and model-version coexistence at the same timestamp.
+- Added Day 65 utility script for one-command schema test execution.
+
+### Artifacts
+
+- `backend/migrations/versions/20260423_08_score_signal_history.py`
+- `backend/src/market_screener/db/models/core.py`
+- `backend/src/market_screener/db/models/__init__.py`
+- `backend/tests/test_score_signal_history_schema.py`
+- `scripts/dev/run_score_signal_history_schema_tests.ps1`
+- `.vscode/launch.json`
+- `backend/README.md`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 66 - 23 April 2026
+
+- Implemented score/signal history backfill job that writes the last 90 days of model outputs into `score_history` and `signal_history`.
+- Added backfill workflow integration across Day 61-64 scoring modules: technical factor transforms, fundamentals quality derivation, sentiment/risk context, composite scoring, explanation payloads, and final signal mapping.
+- Added deterministic daily idempotency guard for backfill runs to prevent duplicate writes in the same day window.
+- Added runtime settings for symbol scope, lookback window, indicator/fundamentals/news source filters, and sentiment weighting half-life used during backfill.
+- Added Day 66 tests for DB-backed row writes and wrapper idempotency skip behavior.
+- Added Day 66 utility script for one-command 90-day backfill execution.
+
+### Artifacts
+
+- `backend/src/market_screener/jobs/score_signal_backfill.py`
+- `backend/src/market_screener/jobs/__init__.py`
+- `backend/src/market_screener/core/settings.py`
+- `backend/tests/test_score_signal_backfill_job.py`
+- `backend/tests/test_settings_management.py`
+- `scripts/dev/run_score_signal_backfill_90d.ps1`
+- `.env.example`
+- `docs/env_reference.md`
+- `.vscode/launch.json`
+- `backend/README.md`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 69 - 23 April 2026
+
+- Implemented SMTP email alert channel integration with digest rendering and settings-driven runtime wiring.
+- Added email alert dispatch job that evaluates recent actionable signals and enforces daily alert cap plus cooldown guardrails before send.
+- Added hourly idempotency guard for dispatch wrapper runs to prevent duplicate sends within the same schedule window.
+- Added Day 69 tests covering SMTP channel behavior, dispatch candidate filtering, cooldown/daily-limit gating, and wrapper idempotency.
+- Added Day 69 utility script and VS Code debug preset for running email-alert tests and dispatch workflow.
+
+### Artifacts
+
+- `backend/src/market_screener/alerts/__init__.py`
+- `backend/src/market_screener/alerts/email_channel.py`
+- `backend/src/market_screener/jobs/email_alert_dispatch.py`
+- `backend/src/market_screener/jobs/__init__.py`
+- `backend/src/market_screener/core/settings.py`
+- `backend/tests/test_email_alert_channel.py`
+- `backend/tests/test_email_alert_dispatch_job.py`
+- `backend/tests/test_settings_management.py`
+- `scripts/dev/run_email_alert_dispatch.ps1`
+- `.env.example`
+- `docs/env_reference.md`
+- `.vscode/launch.json`
+- `backend/README.md`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`

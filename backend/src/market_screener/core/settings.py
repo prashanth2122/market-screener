@@ -86,6 +86,10 @@ class Settings(BaseSettings):
     smtp_password: str | None = None
     smtp_from: str | None = None
     smtp_to: str | None = None
+    alert_dispatch_symbol_limit: int = 150
+    alert_dispatch_lookback_hours: int = 72
+    alert_dispatch_signal_allowlist: str = "strong_buy,buy"
+    alert_dispatch_min_score: float = 70.0
 
     # Pipeline tuning
     ingestion_swing_interval_seconds: int = 300
@@ -120,6 +124,26 @@ class Settings(BaseSettings):
     fundamentals_snapshot_period_type: str = "annual"
     fundamentals_snapshot_limit_per_symbol: int = 2
     fundamentals_snapshot_source: str = "fmp_v1"
+    news_ingestion_symbol_limit: int = 150
+    news_ingestion_limit_per_symbol: int = 5
+    news_ingestion_lookback_hours: int = 72
+    news_ingestion_language: str = "en"
+    news_ingestion_source: str = "marketaux_v1"
+    sentiment_pipeline_symbol_limit: int = 150
+    sentiment_pipeline_lookback_hours: int = 72
+    sentiment_pipeline_half_life_hours: int = 24
+    sentiment_pipeline_source_filter: str = "marketaux_v1"
+    event_risk_symbol_limit: int = 150
+    event_risk_lookback_hours: int = 72
+    event_risk_source_filter: str = "marketaux_v1"
+    event_risk_negative_sentiment_threshold: float = -0.35
+    score_backfill_symbol_limit: int = 150
+    score_backfill_lookback_days: int = 90
+    score_backfill_indicator_source: str = "ta_v1"
+    score_backfill_fundamentals_source: str = "fmp_v1"
+    score_backfill_news_source_filter: str = "marketaux_v1"
+    score_backfill_news_lookback_hours: int = 72
+    score_backfill_sentiment_half_life_hours: int = 24
     equity_ohlcv_resolution: str = "D"
     equity_ohlcv_lookback_days: int = 365
     crypto_ohlcv_vs_currency: str = "usd"
@@ -146,6 +170,7 @@ class Settings(BaseSettings):
     alpha_vantage_quota_per_minute: int = 5
     finnhub_quota_per_minute: int = 60
     coingecko_quota_per_minute: int = 30
+    marketaux_quota_per_minute: int = 30
 
     # Staleness/cache
     price_cache_ttl_seconds: int = 60

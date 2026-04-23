@@ -237,3 +237,104 @@ class FundamentalsSnapshot(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
+
+
+class NewsEvent(Base):
+    """Persisted news articles/events used by sentiment and risk pipelines."""
+
+    __tablename__ = "news_events"
+    __table_args__ = (
+        UniqueConstraint(
+            "asset_id",
+            "published_at",
+            "source",
+            "title",
+            name="uq_news_events_asset_published_source_title",
+        ),
+        Index("ix_news_events_asset_published", "asset_id", "published_at"),
+        Index("ix_news_events_source_published", "source", "published_at"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    asset_id: Mapped[int] = mapped_column(
+        ForeignKey("assets.id", ondelete="CASCADE"), nullable=False
+    )
+    published_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    source: Mapped[str] = mapped_column(String(64), nullable=False)
+    title: Mapped[str] = mapped_column(Text, nullable=False)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    language: Mapped[str | None] = mapped_column(String(8), nullable=True)
+    sentiment_score: Mapped[Decimal | None] = mapped_column(Numeric(8, 4), nullable=True)
+    event_type: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    risk_flag: Mapped[bool | None] = mapped_column(nullable=True)
+    details: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+
+class ScoreHistory(Base):
+    """Persisted composite score history per asset and model version."""
+
+    __tablename__ = "score_history"
+    __table_args__ = (
+        UniqueConstraint(
+            "asset_id",
+            "as_of_ts",
+            "model_version",
+            name="uq_score_history_asset_asof_model",
+        ),
+        Index("ix_score_history_asset_asof", "asset_id", "as_of_ts"),
+        Index("ix_score_history_model_asof", "model_version", "as_of_ts"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    asset_id: Mapped[int] = mapped_column(
+        ForeignKey("assets.id", ondelete="CASCADE"), nullable=False
+    )
+    as_of_ts: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    model_version: Mapped[str] = mapped_column(String(64), nullable=False)
+    composite_score: Mapped[Decimal] = mapped_column(Numeric(8, 4), nullable=False)
+    technical_score: Mapped[Decimal | None] = mapped_column(Numeric(8, 4), nullable=True)
+    fundamental_score: Mapped[Decimal | None] = mapped_column(Numeric(8, 4), nullable=True)
+    sentiment_risk_score: Mapped[Decimal | None] = mapped_column(Numeric(8, 4), nullable=True)
+    details: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+
+class SignalHistory(Base):
+    """Persisted signal history per asset and model version."""
+
+    __tablename__ = "signal_history"
+    __table_args__ = (
+        UniqueConstraint(
+            "asset_id",
+            "as_of_ts",
+            "model_version",
+            name="uq_signal_history_asset_asof_model",
+        ),
+        Index("ix_signal_history_asset_asof", "asset_id", "as_of_ts"),
+        Index("ix_signal_history_signal_asof", "signal", "as_of_ts"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    asset_id: Mapped[int] = mapped_column(
+        ForeignKey("assets.id", ondelete="CASCADE"), nullable=False
+    )
+    as_of_ts: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    model_version: Mapped[str] = mapped_column(String(64), nullable=False)
+    signal: Mapped[str] = mapped_column(String(16), nullable=False)
+    score: Mapped[Decimal | None] = mapped_column(Numeric(8, 4), nullable=True)
+    confidence: Mapped[Decimal | None] = mapped_column(Numeric(5, 4), nullable=True)
+    blocked_by_risk: Mapped[bool] = mapped_column(
+        nullable=False,
+        server_default=text("false"),
+    )
+    reasons: Mapped[list[str] | None] = mapped_column(JSON, nullable=True)
+    details: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )

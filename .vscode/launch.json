@@ -1,0 +1,185 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Day 59: Event Risk Tagging (Python)",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/backend/src/market_screener/jobs/event_risk_tagging.py",
+      "cwd": "${workspaceFolder}/backend",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/backend/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Day 59: Event Risk Rules (Core Smoke)",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/backend/src/market_screener/core/event_risk.py",
+      "cwd": "${workspaceFolder}/backend",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/backend/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Day 60: Sentiment + Risk Tests",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "backend/tests/test_sentiment_core.py",
+        "backend/tests/test_sentiment_scoring_job.py",
+        "backend/tests/test_event_risk_rules.py",
+        "backend/tests/test_event_risk_tagging_job.py",
+        "backend/tests/test_sentiment_event_risk_pipeline.py"
+      ],
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/backend/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Day 61: Score Factor Checks",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "backend/tests/test_score_factor_transforms.py"
+      ],
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/backend/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Day 62: Composite Score Engine Checks",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "backend/tests/test_composite_score_engine.py"
+      ],
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/backend/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Day 63: Score Explanation Payload Checks",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "backend/tests/test_score_explanation_payload.py"
+      ],
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/backend/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Day 64: Signal Mapping Rule Checks",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "backend/tests/test_signal_mapping_rules.py"
+      ],
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/backend/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Day 65: Score/Signal History Schema Tests",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "backend/tests/test_score_signal_history_schema.py"
+      ],
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/backend/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Day 66: Score/Signal Backfill Tests",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "backend/tests/test_score_signal_backfill_job.py"
+      ],
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/backend/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Day 69: Email Alert Dispatch Tests",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "backend/tests/test_email_alert_channel.py",
+        "backend/tests/test_email_alert_dispatch_job.py"
+      ],
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/backend/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Local Stack: Start",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/dev/run_local_stack.ps1 -Action start",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Local Stack: Status",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/dev/run_local_stack.ps1 -Action status",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Local Stack: Stop",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/dev/run_local_stack.ps1 -Action stop",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}

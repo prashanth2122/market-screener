@@ -24,6 +24,18 @@ from market_screener.jobs.equity_ohlcv import (
     EquityOhlcvIngestionResult,
     EquityOhlcvParseError,
 )
+from market_screener.jobs.email_alert_dispatch import (
+    EmailAlertAssetStatus,
+    EmailAlertDispatchJob,
+    EmailAlertDispatchResult,
+    run_email_alert_dispatch,
+)
+from market_screener.jobs.event_risk_tagging import (
+    AssetEventRiskStatus,
+    EventRiskTaggingJob,
+    EventRiskTaggingResult,
+    run_event_risk_tagging,
+)
 from market_screener.jobs.freshness_monitor import (
     SymbolFreshnessStatus,
     WatchlistFreshnessMonitorJob,
@@ -75,6 +87,11 @@ from market_screener.jobs.macro_ohlcv import (
     MacroOhlcvIngestionResult,
     MacroOhlcvParseError,
 )
+from market_screener.jobs.news_ingestion import (
+    NewsIngestionJob,
+    NewsIngestionResult,
+    run_news_ingestion,
+)
 from market_screener.jobs.price_normalization import (
     NormalizedPricePoint,
     PriceNormalizationError,
@@ -97,6 +114,18 @@ from market_screener.jobs.symbol_metadata import (
     SymbolMetadataIngestionJob,
     SymbolRecord,
     SymbolUniverseParseError,
+)
+from market_screener.jobs.sentiment_scoring import (
+    AssetSentimentStatus,
+    SentimentScoringJob,
+    SentimentScoringResult,
+    run_sentiment_scoring,
+)
+from market_screener.jobs.score_signal_backfill import (
+    ScoreSignalBackfillAssetStatus,
+    ScoreSignalBackfillJob,
+    ScoreSignalBackfillResult,
+    run_score_signal_backfill,
 )
 from market_screener.jobs.trend_regime import (
     TrendRegimeAssetStatus,
@@ -124,11 +153,22 @@ __all__ = [
     "MacroOhlcvParseError",
     "MacroOhlcvIngestionResult",
     "MacroOhlcvIngestionJob",
+    "NewsIngestionResult",
+    "NewsIngestionJob",
+    "run_news_ingestion",
     "NormalizedPricePoint",
     "PriceNormalizationError",
     "EquityOhlcvParseError",
     "EquityOhlcvIngestionResult",
     "EquityOhlcvIngestionJob",
+    "EmailAlertAssetStatus",
+    "EmailAlertDispatchResult",
+    "EmailAlertDispatchJob",
+    "run_email_alert_dispatch",
+    "AssetEventRiskStatus",
+    "EventRiskTaggingResult",
+    "EventRiskTaggingJob",
+    "run_event_risk_tagging",
     "parse_watchlist_symbols",
     "SymbolFreshnessStatus",
     "WatchlistFreshnessResult",
@@ -157,6 +197,14 @@ __all__ = [
     "ProviderHealthDashboardJob",
     "read_provider_health_dashboard",
     "run_provider_health_dashboard",
+    "AssetSentimentStatus",
+    "SentimentScoringResult",
+    "SentimentScoringJob",
+    "run_sentiment_scoring",
+    "ScoreSignalBackfillAssetStatus",
+    "ScoreSignalBackfillResult",
+    "ScoreSignalBackfillJob",
+    "run_score_signal_backfill",
     "RelativeVolumeAssetStatus",
     "RelativeVolumeResult",
     "RelativeVolumeJob",

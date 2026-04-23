@@ -111,6 +111,7 @@ All formulas should be versioned (for example `score_model_version=v1.0.0`) so c
 - Engineering standards: [`CONTRIBUTING.md`](CONTRIBUTING.md)
 - Pre-commit hooks config: [`.pre-commit-config.yaml`](.pre-commit-config.yaml)
 - Docker stack guide: [`infra/docker/README.md`](infra/docker/README.md)
+- Unified local launcher: [`scripts/dev/run_local_stack.ps1`](scripts/dev/run_local_stack.ps1)
 - Backend migration guide: [`backend/migrations/README.md`](backend/migrations/README.md)
 
 ## 9) Immediate Next Build Steps

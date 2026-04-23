@@ -75,6 +75,7 @@ def test_provider_quota_settings_support_env_overrides(
     monkeypatch.setenv("ALPHA_VANTAGE_QUOTA_PER_MINUTE", "10")
     monkeypatch.setenv("FINNHUB_QUOTA_PER_MINUTE", "80")
     monkeypatch.setenv("COINGECKO_QUOTA_PER_MINUTE", "45")
+    monkeypatch.setenv("MARKETAUX_QUOTA_PER_MINUTE", "25")
 
     settings = reload_settings()
 
@@ -83,6 +84,7 @@ def test_provider_quota_settings_support_env_overrides(
     assert settings.alpha_vantage_quota_per_minute == 10
     assert settings.finnhub_quota_per_minute == 80
     assert settings.coingecko_quota_per_minute == 45
+    assert settings.marketaux_quota_per_minute == 25
 
 
 def test_ingestion_failure_retry_settings_support_env_overrides(
@@ -267,3 +269,91 @@ def test_fundamentals_snapshot_settings_support_env_overrides(
     assert settings.fundamentals_snapshot_period_type == "quarter"
     assert settings.fundamentals_snapshot_limit_per_symbol == 4
     assert settings.fundamentals_snapshot_source == "fmp_test"
+
+
+def test_news_ingestion_settings_support_env_overrides(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("NEWS_INGESTION_SYMBOL_LIMIT", "90")
+    monkeypatch.setenv("NEWS_INGESTION_LIMIT_PER_SYMBOL", "8")
+    monkeypatch.setenv("NEWS_INGESTION_LOOKBACK_HOURS", "48")
+    monkeypatch.setenv("NEWS_INGESTION_LANGUAGE", "en")
+    monkeypatch.setenv("NEWS_INGESTION_SOURCE", "marketaux_test")
+
+    settings = reload_settings()
+
+    assert settings.news_ingestion_symbol_limit == 90
+    assert settings.news_ingestion_limit_per_symbol == 8
+    assert settings.news_ingestion_lookback_hours == 48
+    assert settings.news_ingestion_language == "en"
+    assert settings.news_ingestion_source == "marketaux_test"
+
+
+def test_sentiment_pipeline_settings_support_env_overrides(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("SENTIMENT_PIPELINE_SYMBOL_LIMIT", "95")
+    monkeypatch.setenv("SENTIMENT_PIPELINE_LOOKBACK_HOURS", "96")
+    monkeypatch.setenv("SENTIMENT_PIPELINE_HALF_LIFE_HOURS", "36")
+    monkeypatch.setenv("SENTIMENT_PIPELINE_SOURCE_FILTER", "marketaux_test")
+
+    settings = reload_settings()
+
+    assert settings.sentiment_pipeline_symbol_limit == 95
+    assert settings.sentiment_pipeline_lookback_hours == 96
+    assert settings.sentiment_pipeline_half_life_hours == 36
+    assert settings.sentiment_pipeline_source_filter == "marketaux_test"
+
+
+def test_event_risk_settings_support_env_overrides(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("EVENT_RISK_SYMBOL_LIMIT", "80")
+    monkeypatch.setenv("EVENT_RISK_LOOKBACK_HOURS", "96")
+    monkeypatch.setenv("EVENT_RISK_SOURCE_FILTER", "marketaux_test")
+    monkeypatch.setenv("EVENT_RISK_NEGATIVE_SENTIMENT_THRESHOLD", "-0.45")
+
+    settings = reload_settings()
+
+    assert settings.event_risk_symbol_limit == 80
+    assert settings.event_risk_lookback_hours == 96
+    assert settings.event_risk_source_filter == "marketaux_test"
+    assert settings.event_risk_negative_sentiment_threshold == -0.45
+
+
+def test_score_backfill_settings_support_env_overrides(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("SCORE_BACKFILL_SYMBOL_LIMIT", "120")
+    monkeypatch.setenv("SCORE_BACKFILL_LOOKBACK_DAYS", "45")
+    monkeypatch.setenv("SCORE_BACKFILL_INDICATOR_SOURCE", "ta_alt")
+    monkeypatch.setenv("SCORE_BACKFILL_FUNDAMENTALS_SOURCE", "fmp_alt")
+    monkeypatch.setenv("SCORE_BACKFILL_NEWS_SOURCE_FILTER", "marketaux_alt")
+    monkeypatch.setenv("SCORE_BACKFILL_NEWS_LOOKBACK_HOURS", "48")
+    monkeypatch.setenv("SCORE_BACKFILL_SENTIMENT_HALF_LIFE_HOURS", "18")
+
+    settings = reload_settings()
+
+    assert settings.score_backfill_symbol_limit == 120
+    assert settings.score_backfill_lookback_days == 45
+    assert settings.score_backfill_indicator_source == "ta_alt"
+    assert settings.score_backfill_fundamentals_source == "fmp_alt"
+    assert settings.score_backfill_news_source_filter == "marketaux_alt"
+    assert settings.score_backfill_news_lookback_hours == 48
+    assert settings.score_backfill_sentiment_half_life_hours == 18
+
+
+def test_alert_dispatch_settings_support_env_overrides(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("ALERT_DISPATCH_SYMBOL_LIMIT", "110")
+    monkeypatch.setenv("ALERT_DISPATCH_LOOKBACK_HOURS", "36")
+    monkeypatch.setenv("ALERT_DISPATCH_SIGNAL_ALLOWLIST", "strong_buy,buy,watch")
+    monkeypatch.setenv("ALERT_DISPATCH_MIN_SCORE", "72.5")
+
+    settings = reload_settings()
+
+    assert settings.alert_dispatch_symbol_limit == 110
+    assert settings.alert_dispatch_lookback_hours == 36
+    assert settings.alert_dispatch_signal_allowlist == "strong_buy,buy,watch"
+    assert settings.alert_dispatch_min_score == 72.5

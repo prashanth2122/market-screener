@@ -6,8 +6,11 @@ from market_screener.db.models.core import (
     IndicatorSnapshot,
     IngestionFailure,
     Job,
+    NewsEvent,
     Price,
     ProviderHealth,
+    ScoreHistory,
+    SignalHistory,
 )
 
 __all__ = [
@@ -18,4 +21,7 @@ __all__ = [
     "IngestionFailure",
     "IndicatorSnapshot",
     "FundamentalsSnapshot",
+    "NewsEvent",
+    "ScoreHistory",
+    "SignalHistory",
 ]

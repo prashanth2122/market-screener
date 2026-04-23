@@ -65,6 +65,26 @@ Scope: Home server deployment, swing mode, zero-budget-first
 - `FUNDAMENTALS_SNAPSHOT_PERIOD_TYPE`: reporting cadence for fundamentals pull (`annual` or `quarter`, default `annual`)
 - `FUNDAMENTALS_SNAPSHOT_LIMIT_PER_SYMBOL`: max number of period rows fetched/written per symbol in each pull (default `2`)
 - `FUNDAMENTALS_SNAPSHOT_SOURCE`: source tag persisted on `fundamentals_snapshot` rows (default `fmp_v1`)
+- `NEWS_INGESTION_SYMBOL_LIMIT`: max active symbols processed per news-ingestion run (default `150`)
+- `NEWS_INGESTION_LIMIT_PER_SYMBOL`: max recent articles fetched per symbol for each news-ingestion run (default `5`)
+- `NEWS_INGESTION_LOOKBACK_HOURS`: lookback window in hours for provider-side news filtering (default `72`)
+- `NEWS_INGESTION_LANGUAGE`: language filter passed to Marketaux news endpoint (default `en`)
+- `NEWS_INGESTION_SOURCE`: source tag persisted on `news_events` rows (default `marketaux_v1`)
+- `SENTIMENT_PIPELINE_SYMBOL_LIMIT`: max active symbols processed per sentiment-scoring run (default `150`)
+- `SENTIMENT_PIPELINE_LOOKBACK_HOURS`: sentiment aggregation window over recent news articles (default `72`)
+- `SENTIMENT_PIPELINE_HALF_LIFE_HOURS`: exponential time-decay half-life for weighted sentiment aggregation (default `24`)
+- `SENTIMENT_PIPELINE_SOURCE_FILTER`: optional `news_events.source` filter for sentiment scoring inputs (default `marketaux_v1`)
+- `EVENT_RISK_SYMBOL_LIMIT`: max active symbols processed per event-risk tagging run (default `150`)
+- `EVENT_RISK_LOOKBACK_HOURS`: lookback window in hours for event-risk tagging over recent `news_events` (default `72`)
+- `EVENT_RISK_SOURCE_FILTER`: optional `news_events.source` filter for rule evaluation (default `marketaux_v1`)
+- `EVENT_RISK_NEGATIVE_SENTIMENT_THRESHOLD`: sentiment threshold at/below which article is tagged as sentiment-risk (`-0.35` by default)
+- `SCORE_BACKFILL_SYMBOL_LIMIT`: max active symbols processed in each score/signal history backfill run (default `150`)
+- `SCORE_BACKFILL_LOOKBACK_DAYS`: lookback window in days for score/signal history backfill writes (default `90`)
+- `SCORE_BACKFILL_INDICATOR_SOURCE`: indicator snapshot source filter used during backfill (`ta_v1` by default)
+- `SCORE_BACKFILL_FUNDAMENTALS_SOURCE`: fundamentals snapshot source filter used during backfill (`fmp_v1` by default)
+- `SCORE_BACKFILL_NEWS_SOURCE_FILTER`: optional news source filter for sentiment/risk context during backfill (`marketaux_v1` by default)
+- `SCORE_BACKFILL_NEWS_LOOKBACK_HOURS`: per-as-of sentiment/risk news aggregation window in hours for backfill (default `72`)
+- `SCORE_BACKFILL_SENTIMENT_HALF_LIFE_HOURS`: exponential half-life in hours used for sentiment weighting during backfill (default `24`)
 - `EQUITY_OHLCV_RESOLUTION`: Finnhub candle resolution for equity ingestion (default `D`)
 - `EQUITY_OHLCV_LOOKBACK_DAYS`: equity history backfill window in days (default `365`)
 - `MARKET_HOLIDAYS_US`: comma-separated US market holidays (`YYYY-MM-DD`) used by trading calendar closure checks
@@ -87,6 +107,7 @@ Scope: Home server deployment, swing mode, zero-budget-first
 - `ALPHA_VANTAGE_QUOTA_PER_MINUTE`: local quota guard for Alpha Vantage (default `5`)
 - `FINNHUB_QUOTA_PER_MINUTE`: local quota guard for Finnhub (default `60`)
 - `COINGECKO_QUOTA_PER_MINUTE`: local quota guard for CoinGecko (default `30`)
+- `MARKETAUX_QUOTA_PER_MINUTE`: local quota guard for Marketaux news requests (default `30`)
 
 ### Alerting
 - `ALERT_CHANNEL_TELEGRAM_ENABLED`: `true` by default
@@ -94,6 +115,17 @@ Scope: Home server deployment, swing mode, zero-budget-first
 - `TELEGRAM_CHAT_ID`: destination chat id
 - `ALERT_MAX_PER_DAY`: locked at `5`
 - `ALERT_COOLDOWN_MINUTES`: default `60`
+- `ALERT_CHANNEL_EMAIL_ENABLED`: enables/disables SMTP email channel dispatch (default `false`)
+- `SMTP_HOST`: SMTP server host (required when email channel is enabled)
+- `SMTP_PORT`: SMTP server port (default `587`)
+- `SMTP_USERNAME`: optional SMTP auth username
+- `SMTP_PASSWORD`: optional SMTP auth password
+- `SMTP_FROM`: sender email address for alert digests
+- `SMTP_TO`: comma-separated recipient list for alert digests
+- `ALERT_DISPATCH_SYMBOL_LIMIT`: max active assets evaluated per email-dispatch run (default `150`)
+- `ALERT_DISPATCH_LOOKBACK_HOURS`: lookback window for latest signal selection during dispatch (default `72`)
+- `ALERT_DISPATCH_SIGNAL_ALLOWLIST`: comma-separated signal list eligible for alerting (default `strong_buy,buy`)
+- `ALERT_DISPATCH_MIN_SCORE`: minimum score threshold for actionable email alerts (default `70.0`)
 
 ## Optional Variables
 
