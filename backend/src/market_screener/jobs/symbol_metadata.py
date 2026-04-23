@@ -12,7 +12,12 @@ from sqlalchemy import select
 
 from market_screener.core.settings import Settings, get_settings
 from market_screener.db.models.core import Asset
-from market_screener.db.session import SessionFactory, create_session_factory_from_settings
+from market_screener.db.session import (
+    SessionFactory,
+    create_session_factory_from_settings,
+)
+from market_screener.jobs.audit import JobAuditTrail
+from market_screener.jobs.idempotency import build_idempotency_key, file_sha256
 
 logger = logging.getLogger("market_screener.jobs.symbol_metadata")
 
@@ -41,6 +46,7 @@ class SymbolIngestionResult:
     created: int
     updated: int
     unchanged: int
+    idempotent_skip: bool = False
 
 
 def load_symbol_universe(path: Path) -> list[SymbolRecord]:
@@ -161,6 +167,7 @@ def run_symbol_metadata_ingestion(
     settings: Settings | None = None,
     session_factory: SessionFactory | None = None,
     universe_path: Path | None = None,
+    audit_trail: JobAuditTrail | None = None,
 ) -> SymbolIngestionResult:
     """Run symbol metadata ingestion with default runtime wiring."""
 
@@ -170,7 +177,49 @@ def run_symbol_metadata_ingestion(
         resolved_settings
     )
     job = SymbolMetadataIngestionJob(resolved_session_factory, resolved_path)
-    return job.run()
+    resolved_audit = audit_trail or JobAuditTrail(resolved_session_factory)
+    try:
+        universe_sha256 = file_sha256(resolved_path)
+    except FileNotFoundError as exc:
+        raise SymbolUniverseParseError(f"symbol_universe_file_missing: {resolved_path}") from exc
+
+    idempotency_key = build_idempotency_key(
+        "symbol_metadata_ingestion",
+        {
+            "universe_path": str(resolved_path.resolve()),
+            "universe_sha256": universe_sha256,
+        },
+    )
+
+    if resolved_audit.has_completed_run("symbol_metadata_ingestion", idempotency_key):
+        return SymbolIngestionResult(
+            processed=0,
+            created=0,
+            updated=0,
+            unchanged=0,
+            idempotent_skip=True,
+        )
+
+    with resolved_audit.track_job_run(
+        "symbol_metadata_ingestion",
+        details={
+            "universe_path": str(resolved_path),
+            "idempotency_key": idempotency_key,
+            "idempotency_hit": False,
+        },
+        idempotency_key=idempotency_key,
+    ) as run_handle:
+        result = job.run()
+        run_handle.add_details(
+            {
+                "processed": result.processed,
+                "created": result.created,
+                "updated": result.updated,
+                "unchanged": result.unchanged,
+                "idempotent_skip": False,
+            }
+        )
+        return result
 
 
 def _require_non_empty_str(entry: dict[str, Any], key: str, index: int) -> str:
@@ -191,6 +240,7 @@ def main() -> None:
             "created": result.created,
             "updated": result.updated,
             "unchanged": result.unchanged,
+            "idempotent_skip": result.idempotent_skip,
         },
     )
     print(
@@ -199,6 +249,7 @@ def main() -> None:
         f" created={result.created}"
         f" updated={result.updated}"
         f" unchanged={result.unchanged}"
+        f" idempotent_skip={result.idempotent_skip}"
     )
 
 

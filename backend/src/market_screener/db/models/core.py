@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import (
+    Date,
     DateTime,
     ForeignKey,
+    JSON,
     Index,
     Numeric,
     String,
@@ -73,11 +75,15 @@ class Job(Base):
     """Operational job execution log."""
 
     __tablename__ = "jobs"
-    __table_args__ = (Index("ix_jobs_name_started_at", "job_name", "started_at"),)
+    __table_args__ = (
+        Index("ix_jobs_name_started_at", "job_name", "started_at"),
+        Index("ix_jobs_name_idempotency", "job_name", "idempotency_key"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     job_name: Mapped[str] = mapped_column(String(100), nullable=False)
     run_id: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
+    idempotency_key: Mapped[str | None] = mapped_column(String(128), nullable=True)
     status: Mapped[str] = mapped_column(String(32), nullable=False)
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
@@ -106,6 +112,128 @@ class ProviderHealth(Base):
     quota_remaining: Mapped[int | None] = mapped_column(nullable=True)
     error_count: Mapped[int] = mapped_column(nullable=False, server_default=text("0"))
     details: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+
+class IngestionFailure(Base):
+    """Persisted ingestion failures for retry workflow."""
+
+    __tablename__ = "ingestion_failures"
+    __table_args__ = (
+        UniqueConstraint("failure_key", name="uq_ingestion_failures_failure_key"),
+        Index("ix_ingestion_failures_status_next_retry", "status", "next_retry_at"),
+        Index("ix_ingestion_failures_job_symbol", "job_name", "asset_symbol"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    failure_key: Mapped[str] = mapped_column(String(160), nullable=False)
+    job_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    asset_symbol: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    provider_name: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, server_default=text("'pending'")
+    )
+    attempt_count: Mapped[int] = mapped_column(nullable=False, server_default=text("1"))
+    error_message: Mapped[str] = mapped_column(Text, nullable=False)
+    context: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    first_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    last_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    next_retry_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    resolved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+
+class IndicatorSnapshot(Base):
+    """Persisted technical-indicator snapshots derived from OHLCV prices."""
+
+    __tablename__ = "indicators_snapshot"
+    __table_args__ = (
+        UniqueConstraint(
+            "asset_id",
+            "ts",
+            "source",
+            name="uq_indicators_snapshot_asset_ts_source",
+        ),
+        Index("ix_indicators_snapshot_asset_ts", "asset_id", "ts"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    asset_id: Mapped[int] = mapped_column(
+        ForeignKey("assets.id", ondelete="CASCADE"), nullable=False
+    )
+    ts: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    ma50: Mapped[Decimal | None] = mapped_column(Numeric(18, 8), nullable=True)
+    ma200: Mapped[Decimal | None] = mapped_column(Numeric(18, 8), nullable=True)
+    rsi14: Mapped[Decimal | None] = mapped_column(Numeric(18, 8), nullable=True)
+    macd: Mapped[Decimal | None] = mapped_column(Numeric(18, 8), nullable=True)
+    macd_signal: Mapped[Decimal | None] = mapped_column(Numeric(18, 8), nullable=True)
+    atr14: Mapped[Decimal | None] = mapped_column(Numeric(18, 8), nullable=True)
+    bb_upper: Mapped[Decimal | None] = mapped_column(Numeric(18, 8), nullable=True)
+    bb_lower: Mapped[Decimal | None] = mapped_column(Numeric(18, 8), nullable=True)
+    source: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+
+class FundamentalsSnapshot(Base):
+    """Persisted fundamentals snapshots for scoring and quality models."""
+
+    __tablename__ = "fundamentals_snapshot"
+    __table_args__ = (
+        UniqueConstraint(
+            "asset_id",
+            "period_type",
+            "period_end",
+            "source",
+            name="uq_fundamentals_snapshot_asset_period_source",
+        ),
+        Index("ix_fundamentals_snapshot_asset_as_of", "asset_id", "as_of_ts"),
+        Index(
+            "ix_fundamentals_snapshot_asset_period",
+            "asset_id",
+            "period_type",
+            "period_end",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    asset_id: Mapped[int] = mapped_column(
+        ForeignKey("assets.id", ondelete="CASCADE"), nullable=False
+    )
+    as_of_ts: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    period_type: Mapped[str] = mapped_column(String(16), nullable=False)
+    period_end: Mapped[date] = mapped_column(Date, nullable=False)
+    filing_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    statement_currency: Mapped[str | None] = mapped_column(String(10), nullable=True)
+
+    revenue: Mapped[Decimal | None] = mapped_column(Numeric(24, 4), nullable=True)
+    gross_profit: Mapped[Decimal | None] = mapped_column(Numeric(24, 4), nullable=True)
+    ebit: Mapped[Decimal | None] = mapped_column(Numeric(24, 4), nullable=True)
+    net_income: Mapped[Decimal | None] = mapped_column(Numeric(24, 4), nullable=True)
+    operating_cash_flow: Mapped[Decimal | None] = mapped_column(Numeric(24, 4), nullable=True)
+
+    total_assets: Mapped[Decimal | None] = mapped_column(Numeric(24, 4), nullable=True)
+    total_liabilities: Mapped[Decimal | None] = mapped_column(Numeric(24, 4), nullable=True)
+    current_assets: Mapped[Decimal | None] = mapped_column(Numeric(24, 4), nullable=True)
+    current_liabilities: Mapped[Decimal | None] = mapped_column(Numeric(24, 4), nullable=True)
+    long_term_debt: Mapped[Decimal | None] = mapped_column(Numeric(24, 4), nullable=True)
+    retained_earnings: Mapped[Decimal | None] = mapped_column(Numeric(24, 4), nullable=True)
+    shares_outstanding: Mapped[Decimal | None] = mapped_column(Numeric(24, 4), nullable=True)
+    market_cap: Mapped[Decimal | None] = mapped_column(Numeric(24, 4), nullable=True)
+
+    eps_basic: Mapped[Decimal | None] = mapped_column(Numeric(18, 8), nullable=True)
+    eps_diluted: Mapped[Decimal | None] = mapped_column(Numeric(18, 8), nullable=True)
+
+    source: Mapped[str] = mapped_column(String(64), nullable=False)
+    details: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )

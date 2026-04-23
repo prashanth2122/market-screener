@@ -32,7 +32,9 @@ def create_session_factory(engine: Engine) -> SessionFactory:
     return _factory
 
 
-def create_session_factory_from_settings(settings: Settings | None = None) -> SessionFactory:
+def create_session_factory_from_settings(
+    settings: Settings | None = None,
+) -> SessionFactory:
     """Create session factory directly from runtime settings."""
 
     engine = create_engine_from_settings(settings)

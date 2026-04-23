@@ -58,6 +58,8 @@ Provider clients:
 
 - Alpha Vantage wrapper: `backend/src/market_screener/providers/alpha_vantage.py`
 - Finnhub wrapper: `backend/src/market_screener/providers/finnhub.py`
+- CoinGecko wrapper: `backend/src/market_screener/providers/coingecko.py`
+- FMP fundamentals wrapper: `backend/src/market_screener/providers/fmp.py`
 - Typed provider exceptions: `backend/src/market_screener/providers/exceptions.py`
 - Shared retry policy: `backend/src/market_screener/providers/retry.py`
 - Token-bucket rate-limit guard: `backend/src/market_screener/providers/rate_limit.py`
@@ -66,3 +68,49 @@ Ingestion jobs:
 
 - Symbol metadata ingestion: `python -m market_screener.jobs.symbol_metadata`
 - Job source: `backend/src/market_screener/jobs/symbol_metadata.py`
+- Equity OHLCV ingestion: `python -m market_screener.jobs.equity_ohlcv`
+- Job source: `backend/src/market_screener/jobs/equity_ohlcv.py`
+- Crypto OHLCV ingestion: `python -m market_screener.jobs.crypto_ohlcv`
+- Job source: `backend/src/market_screener/jobs/crypto_ohlcv.py`
+- Forex/commodity OHLCV ingestion: `python -m market_screener.jobs.macro_ohlcv`
+- Job source: `backend/src/market_screener/jobs/macro_ohlcv.py`
+- Equity backfill validation: `python -m market_screener.jobs.backfill_validation`
+- Validation source: `backend/src/market_screener/jobs/backfill_validation.py`
+- Watchlist freshness monitor: `python -m market_screener.jobs.freshness_monitor`
+- Monitor source: `backend/src/market_screener/jobs/freshness_monitor.py`
+- Provider health dashboard refresh: `python -m market_screener.jobs.provider_health_dashboard`
+- Dashboard source: `backend/src/market_screener/jobs/provider_health_dashboard.py`
+- Ingestion stress test: `python -m market_screener.jobs.ingestion_stress`
+- Stress source: `backend/src/market_screener/jobs/ingestion_stress.py`
+- Ingestion failure retry workflow: `python -m market_screener.jobs.ingestion_retry`
+- Retry source: `backend/src/market_screener/jobs/ingestion_retry.py`
+- Indicator snapshot refresh: `python -m market_screener.jobs.indicator_snapshot`
+- Indicator snapshot source: `backend/src/market_screener/jobs/indicator_snapshot.py`
+- Fundamentals snapshot pull: `python -m market_screener.jobs.fundamentals_snapshot`
+- Fundamentals snapshot source: `backend/src/market_screener/jobs/fundamentals_snapshot.py`
+- Fundamentals snapshot schema: `backend/src/market_screener/db/models/core.py` (`fundamentals_snapshot` table for annual/quarterly fundamentals ingestion)
+- Trend regime classification: `python -m market_screener.jobs.trend_regime`
+- Trend regime source: `backend/src/market_screener/jobs/trend_regime.py`
+- Breakout detection: `python -m market_screener.jobs.breakout_detection`
+- Breakout source: `backend/src/market_screener/jobs/breakout_detection.py`
+- Relative volume calculation: `python -m market_screener.jobs.relative_volume`
+- Relative volume source: `backend/src/market_screener/jobs/relative_volume.py`
+- Ingestion audit trail helper: `backend/src/market_screener/jobs/audit.py` (writes to `jobs` table)
+- Idempotency key helper: `backend/src/market_screener/jobs/idempotency.py` (deterministic repeated-pull guard keys)
+- Ingestion failure store: `backend/src/market_screener/jobs/ingestion_failures.py` (writes to `ingestion_failures` table)
+- Shared price normalization schema: `backend/src/market_screener/jobs/price_normalization.py`
+- Ingestion adapter interfaces: `backend/src/market_screener/jobs/ingestion_adapters.py` (provider-specific fetch/normalize boundaries)
+- UTC timezone normalization helper: `backend/src/market_screener/core/timezone.py` (normalizes persisted datetimes to UTC)
+- Trading calendar helper: `backend/src/market_screener/core/trading_calendar.py` (weekend + holiday market closure checks)
+- TA library integration helper: `backend/src/market_screener/core/ta_library.py` (TA backend availability + indicator wrappers)
+- Indicator calculations helper: `backend/src/market_screener/core/indicators.py` (MA50, MA200, RSI14, MACD, ATR14, and Bollinger band series + latest snapshots)
+- Indicator reference validation helper: `backend/src/market_screener/core/indicator_reference_validation.py` (validates indicator outputs against versioned checkpoint references)
+- Piotroski F-score helper: `backend/src/market_screener/core/piotroski.py` (9-point fundamentals quality scoring from current vs prior period)
+- Trend regime helper: `backend/src/market_screener/core/trend_regime.py` (bull/bear/range and transition regime classification)
+- Breakout helper: `backend/src/market_screener/core/breakout.py` (recent-range breakout and breakdown detection)
+- Relative volume helper: `backend/src/market_screener/core/relative_volume.py` (current volume vs trailing baseline ratio classification)
+
+System dashboard endpoints:
+
+- `GET /api/v1/system/provider-health` for provider latency/success dashboard reads.
+- `POST /api/v1/system/provider-health/refresh` to recompute provider dashboard snapshots from recent job history.

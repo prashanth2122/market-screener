@@ -8,7 +8,11 @@ from fastapi import Depends, FastAPI, Request, Response, status
 
 from market_screener.api.router import api_router
 from market_screener.core.health import evaluate_runtime_health
-from market_screener.core.logging import configure_logging, reset_request_id, set_request_id
+from market_screener.core.logging import (
+    configure_logging,
+    reset_request_id,
+    set_request_id,
+)
 from market_screener.core.settings import Settings, get_settings
 
 request_logger = logging.getLogger("market_screener.request")

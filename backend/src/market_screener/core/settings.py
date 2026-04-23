@@ -92,6 +92,48 @@ class Settings(BaseSettings):
     news_poll_interval_seconds: int = 900
     fundamentals_refresh_hours: int = 24
     symbol_universe_file: str = "config/symbols_v1.json"
+    watchlist_symbols: str = ""
+    market_holidays_us: str = ""
+    market_holidays_nse: str = ""
+    market_holidays_global: str = ""
+    freshness_monitor_target_age_minutes: int = 5
+    freshness_monitor_symbol_limit: int = 20
+    provider_health_lookback_hours: int = 24
+    provider_health_job_sample_limit: int = 500
+    provider_health_dashboard_history_limit: int = 24
+    ingestion_stress_symbol_limit: int = 100
+    indicator_snapshot_symbol_limit: int = 150
+    indicator_snapshot_price_lookback_rows: int = 260
+    indicator_snapshot_source: str = "ta_v1"
+    trend_regime_symbol_limit: int = 150
+    trend_regime_indicator_source: str = "ta_v1"
+    trend_regime_macd_flat_tolerance: float = 0.10
+    breakout_symbol_limit: int = 150
+    breakout_lookback_bars: int = 20
+    breakout_buffer_ratio: float = 0.002
+    breakout_indicator_source: str = "ta_v1"
+    relative_volume_symbol_limit: int = 150
+    relative_volume_lookback_bars: int = 20
+    relative_volume_spike_threshold: float = 1.5
+    relative_volume_dry_up_threshold: float = 0.7
+    fundamentals_snapshot_symbol_limit: int = 150
+    fundamentals_snapshot_period_type: str = "annual"
+    fundamentals_snapshot_limit_per_symbol: int = 2
+    fundamentals_snapshot_source: str = "fmp_v1"
+    equity_ohlcv_resolution: str = "D"
+    equity_ohlcv_lookback_days: int = 365
+    crypto_ohlcv_vs_currency: str = "usd"
+    crypto_ohlcv_days: int = 365
+    macro_ohlcv_lookback_days: int = 365
+    macro_ohlcv_forex_outputsize: str = "full"
+    macro_ohlcv_commodity_interval: str = "daily"
+    backfill_validation_symbol_limit: int = 20
+    backfill_validation_lookback_days: int = 7
+    backfill_validation_min_rows: int = 3
+    backfill_validation_max_last_row_age_days: int = 4
+    ingestion_failure_retry_backoff_minutes: str = "5,15,60"
+    ingestion_failure_max_attempts: int = 5
+    ingestion_failure_retry_batch_size: int = 50
 
     # HTTP policy
     http_connect_timeout_seconds: int = 5
@@ -100,8 +142,10 @@ class Settings(BaseSettings):
     http_retry_attempts: int = 3
     http_backoff_seconds: str = "1,2,4"
     provider_quota_reserve_ratio: float = 0.1
+    fmp_quota_per_minute: int = 60
     alpha_vantage_quota_per_minute: int = 5
     finnhub_quota_per_minute: int = 60
+    coingecko_quota_per_minute: int = 30
 
     # Staleness/cache
     price_cache_ttl_seconds: int = 60

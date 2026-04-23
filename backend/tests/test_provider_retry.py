@@ -5,7 +5,11 @@ from __future__ import annotations
 import httpx
 import pytest
 
-from market_screener.providers.retry import RetryPolicy, parse_backoff_seconds, request_with_retry
+from market_screener.providers.retry import (
+    RetryPolicy,
+    parse_backoff_seconds,
+    request_with_retry,
+)
 
 
 def test_request_with_retry_retries_on_timeout_then_succeeds() -> None:

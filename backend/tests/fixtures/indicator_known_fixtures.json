@@ -1,0 +1,235 @@
+{
+  "trend_regime": [
+    {
+      "name": "bullish_trend",
+      "input": {
+        "ts": "2026-04-21T00:00:00+00:00",
+        "ma50": 105.0,
+        "ma200": 100.0,
+        "rsi14": 60.0,
+        "macd": 1.2,
+        "macd_signal": 0.8,
+        "atr14": 2.0,
+        "bb_upper": 110.0,
+        "bb_lower": 100.0
+      },
+      "expected": {
+        "regime": "bullish",
+        "confidence_min": 0.8,
+        "reasons_contains": ["ma50_above_ma200", "macd_above_signal"]
+      }
+    },
+    {
+      "name": "bearish_trend",
+      "input": {
+        "ts": "2026-04-21T00:00:00+00:00",
+        "ma50": 95.0,
+        "ma200": 100.0,
+        "rsi14": 40.0,
+        "macd": -1.0,
+        "macd_signal": -0.5,
+        "atr14": 2.0,
+        "bb_upper": 101.0,
+        "bb_lower": 90.0
+      },
+      "expected": {
+        "regime": "bearish",
+        "confidence_min": 0.8,
+        "reasons_contains": ["ma50_below_ma200", "macd_below_signal"]
+      }
+    },
+    {
+      "name": "range_trend",
+      "input": {
+        "ts": "2026-04-21T00:00:00+00:00",
+        "ma50": 100.0,
+        "ma200": 100.0,
+        "rsi14": 50.0,
+        "macd": 0.03,
+        "macd_signal": 0.0,
+        "atr14": 1.0,
+        "bb_upper": 101.0,
+        "bb_lower": 99.0
+      },
+      "params": {
+        "macd_flat_tolerance": 0.05
+      },
+      "expected": {
+        "regime": "range",
+        "confidence_min": 0.7,
+        "reasons_contains": ["flat_macd", "midline_rsi"]
+      }
+    },
+    {
+      "name": "unknown_missing_ma",
+      "input": {
+        "ts": "2026-04-21T00:00:00+00:00",
+        "ma50": null,
+        "ma200": 100.0,
+        "rsi14": 55.0,
+        "macd": 0.4,
+        "macd_signal": 0.1
+      },
+      "expected": {
+        "regime": "unknown",
+        "confidence_exact": 0.0,
+        "reasons_contains": ["missing_moving_average_context"]
+      }
+    }
+  ],
+  "breakout": [
+    {
+      "name": "upside_breakout",
+      "input": {
+        "ts": "2026-04-21T00:00:00+00:00",
+        "close": 103.0,
+        "high": 103.5,
+        "low": 101.0,
+        "recent_high": 100.0,
+        "recent_low": 95.0,
+        "bb_upper": 102.0,
+        "atr14": 4.0
+      },
+      "params": {
+        "breakout_buffer_ratio": 0.002
+      },
+      "expected": {
+        "signal": "upside_breakout",
+        "confidence_min": 0.86,
+        "reasons_contains": ["close_or_high_above_recent_high", "close_above_bb_upper"]
+      }
+    },
+    {
+      "name": "downside_breakout",
+      "input": {
+        "ts": "2026-04-21T00:00:00+00:00",
+        "close": 92.0,
+        "high": 94.0,
+        "low": 91.5,
+        "recent_high": 105.0,
+        "recent_low": 95.0,
+        "bb_lower": 93.0,
+        "atr14": 3.0
+      },
+      "params": {
+        "breakout_buffer_ratio": 0.002
+      },
+      "expected": {
+        "signal": "downside_breakout",
+        "confidence_min": 0.86,
+        "reasons_contains": ["close_or_low_below_recent_low", "close_below_bb_lower"]
+      }
+    },
+    {
+      "name": "no_breakout",
+      "input": {
+        "ts": "2026-04-21T00:00:00+00:00",
+        "close": 99.0,
+        "high": 100.0,
+        "low": 98.0,
+        "recent_high": 101.0,
+        "recent_low": 97.0
+      },
+      "expected": {
+        "signal": "none",
+        "reasons_contains": ["within_recent_range"]
+      }
+    },
+    {
+      "name": "unknown_missing_range",
+      "input": {
+        "ts": "2026-04-21T00:00:00+00:00",
+        "close": 99.0,
+        "high": 100.0,
+        "low": 98.0,
+        "recent_high": null,
+        "recent_low": 97.0
+      },
+      "expected": {
+        "signal": "unknown",
+        "confidence_exact": 0.0,
+        "reasons_contains": ["missing_recent_range"]
+      }
+    }
+  ],
+  "relative_volume": [
+    {
+      "name": "rvol_spike",
+      "input": {
+        "ts": "2026-04-21T00:00:00+00:00",
+        "current_volume": 1500.0,
+        "baseline_volumes": [900.0, 1000.0, 1100.0]
+      },
+      "params": {
+        "spike_threshold": 1.4,
+        "dry_up_threshold": 0.7
+      },
+      "expected": {
+        "state": "spike",
+        "ratio_min": 1.5,
+        "reasons_contains": ["relative_volume_above_spike_threshold"]
+      }
+    },
+    {
+      "name": "rvol_dry_up",
+      "input": {
+        "ts": "2026-04-21T00:00:00+00:00",
+        "current_volume": 400.0,
+        "baseline_volumes": [900.0, 1000.0, 1100.0]
+      },
+      "params": {
+        "spike_threshold": 1.5,
+        "dry_up_threshold": 0.5
+      },
+      "expected": {
+        "state": "dry_up",
+        "ratio_max": 0.5,
+        "reasons_contains": ["relative_volume_below_dry_up_threshold"]
+      }
+    },
+    {
+      "name": "rvol_normal",
+      "input": {
+        "ts": "2026-04-21T00:00:00+00:00",
+        "current_volume": 950.0,
+        "baseline_volumes": [900.0, 1000.0, 1100.0]
+      },
+      "params": {
+        "spike_threshold": 1.5,
+        "dry_up_threshold": 0.7
+      },
+      "expected": {
+        "state": "normal",
+        "ratio_min": 0.9,
+        "ratio_max": 1.0,
+        "reasons_contains": ["relative_volume_within_normal_band"]
+      }
+    },
+    {
+      "name": "rvol_unknown_missing_current",
+      "input": {
+        "ts": "2026-04-21T00:00:00+00:00",
+        "current_volume": null,
+        "baseline_volumes": [900.0, 1000.0]
+      },
+      "expected": {
+        "state": "unknown",
+        "ratio_null": true,
+        "reasons_contains": ["missing_current_volume"]
+      }
+    },
+    {
+      "name": "rvol_unknown_missing_baseline",
+      "input": {
+        "ts": "2026-04-21T00:00:00+00:00",
+        "current_volume": 1000.0,
+        "baseline_volumes": []
+      },
+      "expected": {
+        "state": "unknown",
+        "ratio_null": true,
+        "reasons_contains": ["missing_baseline_volume"]
+      }
+    }
+  ]
+}

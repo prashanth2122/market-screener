@@ -23,7 +23,9 @@ def test_evaluate_runtime_health_returns_ok_when_all_checks_up(monkeypatch) -> N
     assert payload["checks"]["redis"]["status"] == "up"
 
 
-def test_evaluate_runtime_health_returns_degraded_when_one_check_fails(monkeypatch) -> None:
+def test_evaluate_runtime_health_returns_degraded_when_one_check_fails(
+    monkeypatch,
+) -> None:
     monkeypatch.setattr(
         "market_screener.core.health.check_postgres",
         lambda _database_url: {"status": "up", "latency_ms": 5, "error": None},

@@ -103,6 +103,7 @@ class ProviderRateLimiter:
             return
 
         self._tokens = min(
-            self._effective_capacity, self._tokens + elapsed * self._refill_rate_per_second
+            self._effective_capacity,
+            self._tokens + elapsed * self._refill_rate_per_second,
         )
         self._last_refill = now

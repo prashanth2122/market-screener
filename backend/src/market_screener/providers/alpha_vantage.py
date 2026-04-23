@@ -186,5 +186,9 @@ class AlphaVantageClient:
 
         return self.fetch(
             "FX_DAILY",
-            {"from_symbol": from_symbol, "to_symbol": to_symbol, "outputsize": outputsize},
+            {
+                "from_symbol": from_symbol,
+                "to_symbol": to_symbol,
+                "outputsize": outputsize,
+            },
         )
