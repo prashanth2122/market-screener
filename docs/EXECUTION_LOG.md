@@ -1194,3 +1194,218 @@
 - `backend/README.md`
 - `scripts/README.md`
 - `docs/EXECUTION_LOG.md`
+
+## Day 70 - 23 April 2026
+
+- Implemented Telegram alert channel integration using Bot API `sendMessage` delivery with settings-driven enable/config guardrails.
+- Added telegram alert dispatch wrapper that reuses Day 69 actionable-signal selection, cooldown, daily-cap, and idempotency behavior.
+- Added Day 70 tests for Telegram channel skip/success behavior and wrapper-level hourly idempotency protection.
+- Added Day 70 utility script and VS Code debug preset for telegram alert dispatch workflows.
+
+### Artifacts
+
+- `backend/src/market_screener/alerts/telegram_channel.py`
+- `backend/src/market_screener/alerts/__init__.py`
+- `backend/src/market_screener/jobs/telegram_alert_dispatch.py`
+- `backend/src/market_screener/jobs/__init__.py`
+- `backend/tests/test_telegram_alert_channel.py`
+- `backend/tests/test_telegram_alert_dispatch_job.py`
+- `scripts/dev/run_telegram_alert_dispatch.ps1`
+- `.vscode/launch.json`
+- `backend/README.md`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 71 - 23 April 2026
+
+- Implemented screener API endpoint (`GET /api/v1/screener`) to return latest per-asset signal/score rows.
+- Added practical filter support for asset type, exchange, quote currency, signal, symbol search, score/confidence thresholds, and risk-block flag.
+- Added sorting and pagination controls with deterministic ordering for UI consumption.
+- Added Day 71 API tests covering default ranking, combined filter behavior, and symbol/confidence filtering.
+- Added Day 71 utility script and VS Code debug preset for quick endpoint test runs.
+
+### Artifacts
+
+- `backend/src/market_screener/api/routes/screener.py`
+- `backend/src/market_screener/api/router.py`
+- `backend/tests/test_screener_endpoint.py`
+- `scripts/dev/run_screener_api_endpoint_tests.ps1`
+- `.vscode/launch.json`
+- `backend/README.md`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 72 - 23 April 2026
+
+- Implemented asset detail API endpoint (`GET /api/v1/assets/{symbol}`) for symbol-level drill-down context.
+- Added latest snapshot retrieval for signal, score, indicator, and fundamentals sections with model/source controls.
+- Added recent history retrieval for OHLCV prices and news events with lookback/source/limit filters.
+- Added Day 72 API tests covering populated detail payloads, source/limit filtering behavior, and unknown-symbol 404 handling.
+- Added Day 72 utility script and VS Code debug preset for one-command endpoint test runs.
+
+### Artifacts
+
+- `backend/src/market_screener/api/routes/asset_detail.py`
+- `backend/src/market_screener/api/router.py`
+- `backend/tests/test_asset_detail_endpoint.py`
+- `scripts/dev/run_asset_detail_api_endpoint_tests.ps1`
+- `.vscode/launch.json`
+- `backend/README.md`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 73 - 23 April 2026
+
+- Added persistent watchlist schema with `watchlists` and `watchlist_items` tables, including uniqueness and lookup indexes.
+- Implemented watchlist CRUD API endpoints and membership item add/remove endpoints under `/api/v1/watchlists`.
+- Added endpoint behavior for duplicate-name protection, symbol validation, idempotent member add handling, and not-found error paths.
+- Added Day 73 endpoint tests covering metadata CRUD flow, item add/remove lifecycle, and key error scenarios.
+- Added Day 73 utility script and VS Code debug preset for one-command watchlist endpoint verification.
+
+### Artifacts
+
+- `backend/migrations/versions/20260424_09_watchlists.py`
+- `backend/src/market_screener/db/models/core.py`
+- `backend/src/market_screener/db/models/__init__.py`
+- `backend/src/market_screener/api/routes/watchlists.py`
+- `backend/src/market_screener/api/router.py`
+- `backend/tests/test_watchlist_endpoint.py`
+- `scripts/dev/run_watchlist_api_endpoint_tests.ps1`
+- `.vscode/launch.json`
+- `backend/README.md`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 74 - 24 April 2026
+
+- Implemented alert history API endpoint (`GET /api/v1/alerts/history`) backed by dispatch job audit records.
+- Added parsing of persisted dispatch events from `jobs.details.sent_alerts` with normalized channel mapping (`email`, `telegram`).
+- Added filter support for channel/symbol/time window and standard pagination controls.
+- Added Day 74 endpoint tests covering channel filtering, symbol filtering, loader parameter wiring, and invalid-channel validation behavior.
+- Added Day 74 utility script and VS Code debug preset for one-command endpoint verification.
+
+### Artifacts
+
+- `backend/src/market_screener/api/routes/alert_history.py`
+- `backend/src/market_screener/api/router.py`
+- `backend/tests/test_alert_history_endpoint.py`
+- `scripts/dev/run_alert_history_api_endpoint_tests.ps1`
+- `.vscode/launch.json`
+- `backend/README.md`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 75 - 24 April 2026
+
+- Implemented first production frontend screener table view in Next.js App Router home page.
+- Added typed frontend data-fetch helper for `GET /api/v1/screener` with explicit payload validation and no-store fetch behavior.
+- Added rendering states for live rows, API failure messaging, and empty-result handling.
+- Replaced placeholder page styling with responsive dashboard-grade table layout, signal chips, and risk badges.
+- Added Day 75 utility script and VS Code debug preset for frontend quality checks (`typecheck`, `lint`, `build`).
+
+### Artifacts
+
+- `frontend/src/app/page.tsx`
+- `frontend/src/lib/screener.ts`
+- `frontend/src/app/globals.css`
+- `frontend/README.md`
+- `scripts/dev/run_frontend_screener_table_checks.ps1`
+- `scripts/README.md`
+- `.vscode/launch.json`
+- `.env.example`
+- `docs/env_reference.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 76 - 25 April 2026
+
+- Added URL-driven screener controls (filters, sorting, pagination) on the frontend home page.
+- Wired controls to backend `GET /api/v1/screener` query params so results are bookmarkable/shareable.
+- Added prev/next pagination that preserves active filters and sorting.
+- Updated CSS for filter panel + pagination bar to match the Day 75 dashboard style.
+
+### Artifacts
+
+- `frontend/src/app/page.tsx`
+- `frontend/src/app/globals.css`
+- `docs/EXECUTION_LOG.md`
+
+## Day 77 - 25 April 2026
+
+- Added a symbol detail page route under `/assets/{symbol}` with drill-down metadata and KPI tiles.
+- Rendered a lightweight SVG close-price chart with MA50/MA200 overlays computed from the returned price history.
+- Added route-level loading and not-found UX for smooth navigation from the screener.
+
+### Artifacts
+
+- `frontend/src/app/assets/[symbol]/page.tsx`
+- `frontend/src/app/assets/[symbol]/loading.tsx`
+- `frontend/src/app/assets/[symbol]/not-found.tsx`
+- `frontend/src/lib/assetDetail.ts`
+- `frontend/src/app/globals.css`
+- `docs/EXECUTION_LOG.md`
+
+## Day 78 - 25 April 2026
+
+- Added a news + sentiment panel on the asset detail page using the backend `history.news` feed.
+- Rendered sentiment score pills, risk flags, source/timestamp metadata, and outbound links to articles.
+- Displayed a simple average sentiment summary for quick context.
+
+### Artifacts
+
+- `frontend/src/app/assets/[symbol]/page.tsx`
+- `frontend/src/lib/assetDetail.ts`
+- `frontend/src/app/globals.css`
+- `docs/EXECUTION_LOG.md`
+
+## Day 79 - 25 April 2026
+
+- Added a score explanation panel to the asset detail page with component scores, effective weights, and driver edges.
+- Highlighted primary support/drag components and surfaced missing-coverage gaps when present.
+
+### Artifacts
+
+- `frontend/src/app/assets/[symbol]/page.tsx`
+- `frontend/src/app/globals.css`
+- `docs/EXECUTION_LOG.md`
+
+## Day 80 - 25 April 2026
+
+- Added an Alerts preferences page with rule toggles for signal allowlist, thresholds, cooldown, and daily cap.
+- Persisted preferences locally and generated copy-ready `.env` overrides so backend dispatch jobs can use the same settings.
+- Added lightweight top navigation links for Screener and Alerts.
+
+### Artifacts
+
+- `frontend/src/app/alerts/page.tsx`
+- `frontend/src/app/alerts/AlertPreferencesClient.tsx`
+- `frontend/src/app/layout.tsx`
+- `frontend/src/app/globals.css`
+- `docs/EXECUTION_LOG.md`
+
+## Day 81 - 25 April 2026
+
+- Added end-to-end API tests that exercise the core flow: screener → asset detail → watchlist CRUD → alert history.
+- Seeded an in-memory DB and validated that key endpoint payloads stay consistent across the flow.
+
+### Artifacts
+
+- `backend/tests/test_core_flow_e2e.py`
+- `scripts/dev/run_core_flow_e2e_tests.ps1`
+- `.vscode/launch.json`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 82 - 25 April 2026
+
+- Added a manual ingestion replay tool to reprocess ingestion failures for a given time window (ignoring next-retry schedule).
+- Included job/status filters and a PowerShell helper for quick operator workflows.
+
+### Artifacts
+
+- `backend/src/market_screener/jobs/ingestion_replay.py`
+- `backend/src/market_screener/jobs/ingestion_failures.py`
+- `backend/tests/test_ingestion_failure_replay_job.py`
+- `scripts/dev/run_ingestion_failure_replay.ps1`
+- `.vscode/launch.json`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`

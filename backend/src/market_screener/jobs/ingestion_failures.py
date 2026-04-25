@@ -135,6 +135,52 @@ class IngestionFailureStore:
             for row in rows
         ]
 
+    def fetch_failures_for_replay(
+        self,
+        *,
+        limit: int,
+        since_utc: datetime,
+        until_utc: datetime,
+        job_name: str | None = None,
+        statuses: set[str] | None = None,
+    ) -> list[IngestionFailureItem]:
+        """Fetch failures for a specific time window, ignoring next_retry schedule."""
+
+        normalized_job = (job_name or "").strip() or None
+        allowed_statuses = {status.strip() for status in (statuses or set()) if status.strip()}
+        if not allowed_statuses:
+            allowed_statuses = {"pending", "retrying"}
+
+        with self._session_factory() as session:
+            query = select(IngestionFailure).where(
+                IngestionFailure.last_seen_at >= since_utc,
+                IngestionFailure.last_seen_at <= until_utc,
+                IngestionFailure.status.in_(tuple(sorted(allowed_statuses))),
+            )
+            if normalized_job:
+                query = query.where(IngestionFailure.job_name == normalized_job)
+            rows = session.scalars(
+                query.order_by(
+                    IngestionFailure.last_seen_at.desc(), IngestionFailure.id.desc()
+                ).limit(limit)
+            ).all()
+
+        return [
+            IngestionFailureItem(
+                id=row.id,
+                failure_key=row.failure_key,
+                job_name=row.job_name,
+                asset_symbol=row.asset_symbol,
+                provider_name=row.provider_name,
+                status=row.status,
+                attempt_count=row.attempt_count,
+                error_message=row.error_message,
+                context=dict(row.context or {}),
+                next_retry_at=row.next_retry_at,
+            )
+            for row in rows
+        ]
+
     def mark_resolved(
         self,
         failure_id: int,

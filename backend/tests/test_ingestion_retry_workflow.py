@@ -65,7 +65,7 @@ def test_equity_ohlcv_job_records_ingestion_failure_on_provider_error() -> None:
         failure_store=failure_store,
     )
 
-    result = job.run()
+    result = job.run(now_utc=datetime(2026, 4, 24, 12, 0, tzinfo=UTC))
 
     assert result.failed_symbols == 1
     with session_local() as session:

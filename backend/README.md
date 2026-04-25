@@ -101,6 +101,8 @@ Ingestion jobs:
 - Event-risk tagging source: `backend/src/market_screener/jobs/event_risk_tagging.py`
 - Email alert dispatch: `python -m market_screener.jobs.email_alert_dispatch`
 - Email alert dispatch source: `backend/src/market_screener/jobs/email_alert_dispatch.py`
+- Telegram alert dispatch: `python -m market_screener.jobs.telegram_alert_dispatch`
+- Telegram alert dispatch source: `backend/src/market_screener/jobs/telegram_alert_dispatch.py`
 - Score/signal 90-day backfill: `python -m market_screener.jobs.score_signal_backfill`
 - Score/signal backfill source: `backend/src/market_screener/jobs/score_signal_backfill.py`
 - Trend regime classification: `python -m market_screener.jobs.trend_regime`
@@ -130,6 +132,7 @@ Ingestion jobs:
 - Score explanation helper: `backend/src/market_screener/core/score_explanation.py` (per-asset explanation payload with summary, component breakdown, drivers, risk context, and gaps)
 - Signal mapping helper: `backend/src/market_screener/core/signal_mapping.py` (Strong Buy / Buy / Watch / Avoid rules with risk overrides and confidence/data-coverage downgrades)
 - SMTP email alert channel: `backend/src/market_screener/alerts/email_channel.py` (digest rendering + SMTP delivery integration for actionable signals)
+- Telegram alert channel: `backend/src/market_screener/alerts/telegram_channel.py` (Bot API digest delivery for actionable signals)
 - Combined sentiment+risk integration tests: `backend/tests/test_sentiment_event_risk_pipeline.py` (validates sentiment backfill and downstream event-risk tagging behavior)
 - Trend regime helper: `backend/src/market_screener/core/trend_regime.py` (bull/bear/range and transition regime classification)
 - Breakout helper: `backend/src/market_screener/core/breakout.py` (recent-range breakout and breakdown detection)
@@ -139,3 +142,27 @@ System dashboard endpoints:
 
 - `GET /api/v1/system/provider-health` for provider latency/success dashboard reads.
 - `POST /api/v1/system/provider-health/refresh` to recompute provider dashboard snapshots from recent job history.
+
+Screener endpoint:
+
+- `GET /api/v1/screener` returns latest per-asset signal/score rows with filtering (`asset_types`, `exchanges`, `quote_currencies`, `signals`, `symbol_query`, `min_score`, `max_score`, `min_confidence`, `blocked_by_risk`) and pagination/sorting controls (`limit`, `offset`, `sort_by`, `sort_dir`).
+
+Asset detail endpoint:
+
+- `GET /api/v1/assets/{symbol}` returns one-symbol drill-down payload with latest signal/score/indicator/fundamentals and recent price/news history.
+- Query controls: `model_version`, `price_source`, `price_lookback_days`, `price_limit`, `indicator_source`, `fundamentals_source`, `news_source`, `news_limit`.
+
+Watchlist endpoints:
+
+- `GET /api/v1/watchlists` lists watchlists with membership counts.
+- `POST /api/v1/watchlists` creates a watchlist (`name`, optional `description`, `active`).
+- `GET /api/v1/watchlists/{watchlist_id}` reads watchlist metadata and item members.
+- `PATCH /api/v1/watchlists/{watchlist_id}` updates metadata fields (`name`, `description`, `active`).
+- `DELETE /api/v1/watchlists/{watchlist_id}` deletes watchlist and its membership rows.
+- `POST /api/v1/watchlists/{watchlist_id}/items` adds member by symbol (`symbol`, optional `notes`).
+- `DELETE /api/v1/watchlists/{watchlist_id}/items/{symbol}` removes member by symbol.
+
+Alert history endpoint:
+
+- `GET /api/v1/alerts/history` returns sent alert history events parsed from dispatch audit logs.
+- Filters: `channel` (`email` or `telegram`), `symbol`, `since_hours`; pagination: `limit`, `offset`.

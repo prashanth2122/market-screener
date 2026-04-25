@@ -30,6 +30,7 @@ from market_screener.jobs.email_alert_dispatch import (
     EmailAlertDispatchResult,
     run_email_alert_dispatch,
 )
+from market_screener.jobs.telegram_alert_dispatch import run_telegram_alert_dispatch
 from market_screener.jobs.event_risk_tagging import (
     AssetEventRiskStatus,
     EventRiskTaggingJob,
@@ -165,6 +166,7 @@ __all__ = [
     "EmailAlertDispatchResult",
     "EmailAlertDispatchJob",
     "run_email_alert_dispatch",
+    "run_telegram_alert_dispatch",
     "AssetEventRiskStatus",
     "EventRiskTaggingResult",
     "EventRiskTaggingJob",

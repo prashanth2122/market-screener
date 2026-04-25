@@ -19,6 +19,7 @@ Scope: Home server deployment, swing mode, zero-budget-first
 - `LOG_JSON`: `true` to emit structured JSON logs
 - `API_HOST`, `API_PORT`: backend bind target
 - `FRONTEND_HOST`, `FRONTEND_PORT`: frontend bind target
+- `MARKET_SCREENER_API_BASE_URL`: frontend server-side API base URL override (default `http://localhost:8000`)
 
 ### Authentication
 - `AUTH_ENABLED`: set `true` for basic auth
@@ -122,10 +123,10 @@ Scope: Home server deployment, swing mode, zero-budget-first
 - `SMTP_PASSWORD`: optional SMTP auth password
 - `SMTP_FROM`: sender email address for alert digests
 - `SMTP_TO`: comma-separated recipient list for alert digests
-- `ALERT_DISPATCH_SYMBOL_LIMIT`: max active assets evaluated per email-dispatch run (default `150`)
+- `ALERT_DISPATCH_SYMBOL_LIMIT`: max active assets evaluated per alert-dispatch run (shared by email + telegram, default `150`)
 - `ALERT_DISPATCH_LOOKBACK_HOURS`: lookback window for latest signal selection during dispatch (default `72`)
 - `ALERT_DISPATCH_SIGNAL_ALLOWLIST`: comma-separated signal list eligible for alerting (default `strong_buy,buy`)
-- `ALERT_DISPATCH_MIN_SCORE`: minimum score threshold for actionable email alerts (default `70.0`)
+- `ALERT_DISPATCH_MIN_SCORE`: minimum score threshold for actionable alerts (default `70.0`)
 
 ## Optional Variables
 

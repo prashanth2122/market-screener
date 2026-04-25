@@ -11,6 +11,8 @@ from market_screener.db.models.core import (
     ProviderHealth,
     ScoreHistory,
     SignalHistory,
+    Watchlist,
+    WatchlistItem,
 )
 
 __all__ = [
@@ -24,4 +26,6 @@ __all__ = [
     "NewsEvent",
     "ScoreHistory",
     "SignalHistory",
+    "Watchlist",
+    "WatchlistItem",
 ]

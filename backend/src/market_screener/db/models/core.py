@@ -24,6 +24,8 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from market_screener.db.base import Base
 
+_JSON_DETAILS = JSON().with_variant(JSONB, "postgresql")
+
 
 class Asset(Base):
     """Tracked market instrument metadata."""
@@ -41,6 +43,53 @@ class Asset(Base):
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
     updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+
+class Watchlist(Base):
+    """User-managed watchlist metadata."""
+
+    __tablename__ = "watchlists"
+    __table_args__ = (
+        UniqueConstraint("name", name="uq_watchlists_name"),
+        Index("ix_watchlists_active_name", "active", "name"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String(80), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    active: Mapped[bool] = mapped_column(nullable=False, default=True, server_default=text("true"))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+
+class WatchlistItem(Base):
+    """Asset membership records for watchlists."""
+
+    __tablename__ = "watchlist_items"
+    __table_args__ = (
+        UniqueConstraint("watchlist_id", "asset_id", name="uq_watchlist_items_watchlist_asset"),
+        Index("ix_watchlist_items_watchlist_added", "watchlist_id", "added_at"),
+        Index("ix_watchlist_items_asset", "asset_id"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    watchlist_id: Mapped[int] = mapped_column(
+        ForeignKey("watchlists.id", ondelete="CASCADE"), nullable=False
+    )
+    asset_id: Mapped[int] = mapped_column(
+        ForeignKey("assets.id", ondelete="CASCADE"), nullable=False
+    )
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    added_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
 
@@ -89,7 +138,7 @@ class Job(Base):
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     duration_ms: Mapped[int | None] = mapped_column(nullable=True)
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
-    details: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
+    details: Mapped[dict[str, Any] | None] = mapped_column(_JSON_DETAILS, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
@@ -111,7 +160,7 @@ class ProviderHealth(Base):
     success_rate: Mapped[Decimal | None] = mapped_column(Numeric(5, 2), nullable=True)
     quota_remaining: Mapped[int | None] = mapped_column(nullable=True)
     error_count: Mapped[int] = mapped_column(nullable=False, server_default=text("0"))
-    details: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
+    details: Mapped[dict[str, Any] | None] = mapped_column(_JSON_DETAILS, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )

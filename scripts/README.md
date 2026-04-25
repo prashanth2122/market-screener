@@ -228,3 +228,55 @@ Guideline:
 `powershell -ExecutionPolicy Bypass -File scripts/dev/run_email_alert_dispatch.ps1`
 - VS Code Run and Debug preset:
 `Day 69: Email Alert Dispatch Tests`
+
+## Day 70 Utility
+
+- Run Telegram alert dispatch:
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_telegram_alert_dispatch.ps1`
+- VS Code Run and Debug preset:
+`Day 70: Telegram Alert Dispatch Tests`
+
+## Day 71 Utility
+
+- Run screener API endpoint tests:
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_screener_api_endpoint_tests.ps1`
+- VS Code Run and Debug preset:
+`Day 71: Screener Endpoint Tests`
+
+## Day 72 Utility
+
+- Run asset detail API endpoint tests:
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_asset_detail_api_endpoint_tests.ps1`
+- VS Code Run and Debug preset:
+`Day 72: Asset Detail Endpoint Tests`
+
+## Day 73 Utility
+
+- Run watchlist API endpoint tests:
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_watchlist_api_endpoint_tests.ps1`
+- VS Code Run and Debug preset:
+`Day 73: Watchlist Endpoint Tests`
+
+## Day 74 Utility
+
+- Run alert history API endpoint tests:
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_alert_history_api_endpoint_tests.ps1`
+- VS Code Run and Debug preset:
+`Day 74: Alert History Endpoint Tests`
+
+## Day 75 Utility
+
+- Run frontend screener table quality checks:
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_frontend_screener_table_checks.ps1`
+- VS Code Run and Debug preset:
+`Day 75: Frontend Screener Checks`
+
+## Day 81 Utility
+
+- Run core flow end-to-end API tests:
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_core_flow_e2e_tests.ps1`
+
+## Day 82 Utility
+
+- Replay ingestion failures for a time window:
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_ingestion_failure_replay.ps1 -SinceHours 24 -Limit 200`

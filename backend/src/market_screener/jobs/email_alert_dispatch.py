@@ -114,7 +114,7 @@ class EmailAlertDispatchJob:
                 ).all()
             )
             asset_ids = [asset.id for asset in assets]
-            symbol_by_id = {asset.id: asset.symbol for asset in assets}
+            evaluated_assets = len(assets)
 
             rows = list(
                 session.execute(
@@ -310,7 +310,7 @@ class EmailAlertDispatchJob:
 
         return EmailAlertDispatchResult(
             requested_assets=self._symbol_limit,
-            evaluated_assets=len(symbol_by_id),
+            evaluated_assets=evaluated_assets,
             candidate_alerts=len(candidates),
             queued_alerts=len(candidates),
             sent_alerts=delivery.sent_alerts,
