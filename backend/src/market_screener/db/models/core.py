@@ -31,6 +31,15 @@ class Asset(Base):
     """Tracked market instrument metadata."""
 
     __tablename__ = "assets"
+    __table_args__ = (
+        Index(
+            "ix_assets_active_type_exchange_quote",
+            "active",
+            "asset_type",
+            "exchange",
+            "quote_currency",
+        ),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     symbol: Mapped[str] = mapped_column(String(32), nullable=False, unique=True)
@@ -101,6 +110,7 @@ class Price(Base):
     __table_args__ = (
         UniqueConstraint("asset_id", "ts", "source", name="uq_prices_asset_ts_source"),
         Index("ix_prices_asset_ts", "asset_id", "ts"),
+        Index("ix_prices_asset_source_ts", "asset_id", "source", "ts"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -199,6 +209,38 @@ class IngestionFailure(Base):
     )
 
 
+class DeadLetterPayload(Base):
+    """Persisted non-retryable ingestion payload failures (dead-letter queue)."""
+
+    __tablename__ = "dead_letter_payloads"
+    __table_args__ = (
+        UniqueConstraint("dead_letter_key", name="uq_dead_letter_payloads_dead_letter_key"),
+        Index("ix_dead_letter_payloads_job_symbol", "job_name", "asset_symbol"),
+        Index("ix_dead_letter_payloads_last_seen", "last_seen_at"),
+        Index("ix_dead_letter_payloads_provider_type", "provider_name", "payload_type"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    dead_letter_key: Mapped[str] = mapped_column(String(160), nullable=False)
+    job_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    asset_symbol: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    provider_name: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    payload_type: Mapped[str] = mapped_column(String(80), nullable=False)
+    reason: Mapped[str] = mapped_column(String(200), nullable=False)
+    error_message: Mapped[str] = mapped_column(Text, nullable=False)
+    payload: Mapped[Any | None] = mapped_column(JSON, nullable=True)
+    context: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    seen_count: Mapped[int] = mapped_column(nullable=False, server_default=text("1"))
+    first_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    last_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+
 class IndicatorSnapshot(Base):
     """Persisted technical-indicator snapshots derived from OHLCV prices."""
 
@@ -211,6 +253,7 @@ class IndicatorSnapshot(Base):
             name="uq_indicators_snapshot_asset_ts_source",
         ),
         Index("ix_indicators_snapshot_asset_ts", "asset_id", "ts"),
+        Index("ix_indicators_snapshot_asset_source_ts", "asset_id", "source", "ts"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -250,6 +293,13 @@ class FundamentalsSnapshot(Base):
             "asset_id",
             "period_type",
             "period_end",
+        ),
+        Index(
+            "ix_fundamentals_snapshot_asset_source_period",
+            "asset_id",
+            "source",
+            "period_end",
+            "as_of_ts",
         ),
     )
 
@@ -301,6 +351,7 @@ class NewsEvent(Base):
             name="uq_news_events_asset_published_source_title",
         ),
         Index("ix_news_events_asset_published", "asset_id", "published_at"),
+        Index("ix_news_events_asset_source_published", "asset_id", "source", "published_at"),
         Index("ix_news_events_source_published", "source", "published_at"),
     )
 
@@ -335,6 +386,7 @@ class ScoreHistory(Base):
             name="uq_score_history_asset_asof_model",
         ),
         Index("ix_score_history_asset_asof", "asset_id", "as_of_ts"),
+        Index("ix_score_history_asset_model_asof", "asset_id", "model_version", "as_of_ts"),
         Index("ix_score_history_model_asof", "model_version", "as_of_ts"),
     )
 
@@ -366,6 +418,8 @@ class SignalHistory(Base):
             name="uq_signal_history_asset_asof_model",
         ),
         Index("ix_signal_history_asset_asof", "asset_id", "as_of_ts"),
+        Index("ix_signal_history_model_asset_asof", "model_version", "asset_id", "as_of_ts"),
+        Index("ix_signal_history_asset_model_asof", "asset_id", "model_version", "as_of_ts"),
         Index("ix_signal_history_signal_asof", "signal", "as_of_ts"),
     )
 

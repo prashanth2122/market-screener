@@ -280,3 +280,89 @@ Guideline:
 
 - Replay ingestion failures for a time window:
 `powershell -ExecutionPolicy Bypass -File scripts/dev/run_ingestion_failure_replay.ps1 -SinceHours 24 -Limit 200`
+
+## Day 83 Utility
+
+- Run dead-letter queue tests:
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_dead_letter_queue_tests.ps1`
+
+## Day 84 Utility
+
+- Run API response cache tests:
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_api_cache_tests.ps1`
+
+## Day 85 Utility
+
+- Run slow query profiler tests:
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_slow_query_profiler_tests.ps1`
+
+## Day 86 Utility
+
+- Run API index metadata smoke tests:
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_api_index_smoke_tests.ps1`
+
+## Day 87 Utility
+
+- Create a timestamped DB backup (custom-format):
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_db_backup.ps1`
+- Restore a DB backup (requires explicit `-Force`):
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_db_restore.ps1 -BackupFile backups/market_screener_YYYYMMDD_HHMMSS.dump -Force`
+
+## Day 88 Utility
+
+- Run secrets and dependency security checks:
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_security_checks.ps1`
+
+## Day 89 Utility
+
+- Run reliability soak test (default 60 minutes):
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_reliability_soak_test.ps1`
+- Run a 7-day soak (10080 minutes) with 60s interval:
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_reliability_soak_test.ps1 -DurationMinutes 10080 -IntervalSeconds 60`
+
+## Day 90 Utility
+
+- Generate a report from a soak JSONL log:
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_soak_report.ps1 -LogFile logs/soak/soak_YYYYMMDD_HHMMSS.jsonl`
+
+## Day 91 Utility
+
+- Create today's paper-trading journal + screener snapshot:
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_paper_trading_day.ps1 -Date 2026-04-28 -Limit 50 -Symbol AAPL`
+
+## Day 92 Utility
+
+- Generate a Day 92 review file from an existing snapshot:
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_paper_trading_review.ps1 -Date 2026-04-28 -Top 10`
+
+## Day 93 Utility
+
+- Run score transform profile checks (transforms only, no weight changes):
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_score_transform_profile_checks.ps1`
+
+## Day 94 Utility
+
+- Run alert threshold + cooldown tests:
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_alert_threshold_cooldown_tests.ps1`
+
+## Day 95 Utility
+
+- Run daily digest job (telegram/email depending on settings):
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_daily_digest.ps1`
+- Run daily digest tests:
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_daily_digest_tests.ps1`
+
+## Day 97 Utility
+
+- Run model version freeze checks (ensures changelog entry exists for `SCORE_MODEL_VERSION`):
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_model_version_freeze_checks.ps1`
+
+## Day 99 Utility
+
+- Run final QA (recommended before "launch"):
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_final_qa.ps1 -SkipNpmAudit`
+
+## Day 100 Utility
+
+- Run launch sequence (final QA + start stack):
+`powershell -ExecutionPolicy Bypass -File scripts/dev/run_launch_v1.ps1 -SkipNpmAudit`

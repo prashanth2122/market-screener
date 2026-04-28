@@ -22,7 +22,15 @@ from market_screener.providers.finnhub import FinnhubClient
 
 
 class AdapterNormalizationError(ValueError):
-    """Raised when adapter cannot normalize provider payload."""
+    """Raised when adapter cannot normalize provider payload.
+
+    The raw provider payload is attached so ingestion jobs can route the event to a
+    dead-letter queue rather than retrying endlessly.
+    """
+
+    def __init__(self, message: str, *, payload: object | None) -> None:
+        super().__init__(message)
+        self.payload = payload
 
 
 class AdapterSymbolMappingError(LookupError):
@@ -101,7 +109,7 @@ class FinnhubEquityAdapter:
         try:
             return normalize_finnhub_stock_candles(payload)
         except PriceNormalizationError as exc:
-            raise AdapterNormalizationError(str(exc)) from exc
+            raise AdapterNormalizationError(str(exc), payload=payload) from exc
 
 
 class CoinGeckoCryptoAdapter:
@@ -132,7 +140,7 @@ class CoinGeckoCryptoAdapter:
         try:
             return normalize_coingecko_ohlc(payload)
         except PriceNormalizationError as exc:
-            raise AdapterNormalizationError(str(exc)) from exc
+            raise AdapterNormalizationError(str(exc), payload=payload) from exc
 
 
 class AlphaVantageMacroAdapter:
@@ -149,6 +157,7 @@ class AlphaVantageMacroAdapter:
         commodity_interval: str,
         window_start_date: date,
     ) -> list[NormalizedPricePoint] | None:
+        payload: object | None = None
         try:
             if asset.asset_type == "forex":
                 if not asset.base_currency:
@@ -169,7 +178,7 @@ class AlphaVantageMacroAdapter:
                 points = normalize_alpha_vantage_commodity_daily(payload)
                 return [point for point in points if point.ts.date() >= window_start_date]
         except PriceNormalizationError as exc:
-            raise AdapterNormalizationError(str(exc)) from exc
+            raise AdapterNormalizationError(str(exc), payload=payload) from exc
 
         return None
 

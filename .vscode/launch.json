@@ -272,6 +272,161 @@
       "cwd": "${workspaceFolder}"
     },
     {
+      "name": "Day 83: Dead Letter Queue Tests",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "backend/tests/test_dead_letter_queue.py"
+      ],
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/backend/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Day 84: API Cache Tests",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "backend/tests/test_api_response_cache.py"
+      ],
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/backend/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Day 85: Slow Query Profiler Tests",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "backend/tests/test_slow_query_profiler.py"
+      ],
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/backend/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Day 86: API Index Smoke Tests",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "backend/tests/test_index_metadata_smoke.py"
+      ],
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/backend/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Day 87: DB Backup",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/dev/run_db_backup.ps1",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Day 88: Security Checks",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/dev/run_security_checks.ps1",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Day 89: Reliability Soak (60m)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/dev/run_reliability_soak_test.ps1 -DurationMinutes 60 -IntervalSeconds 60",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Day 90: Soak Report (Latest)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/dev/run_soak_report.ps1 -LogFile logs/soak/soak_20260428_120927.jsonl",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Day 91: Paper Trading Day",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/dev/run_paper_trading_day.ps1 -Limit 50 -Symbol AAPL",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Day 92: Paper Trading Review",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/dev/run_paper_trading_review.ps1 -Top 10",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Day 93: Score Transform Profile Checks",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/dev/run_score_transform_profile_checks.ps1",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Day 94: Alert Threshold + Cooldown Tests",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/dev/run_alert_threshold_cooldown_tests.ps1",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Day 95: Daily Digest",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/dev/run_daily_digest.ps1",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Day 95: Daily Digest Tests",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/dev/run_daily_digest_tests.ps1",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Day 97: Model Version Freeze Checks",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/dev/run_model_version_freeze_checks.ps1",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Day 99: Final QA (Skip npm audit)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/dev/run_final_qa.ps1 -SkipNpmAudit",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Day 100: Launch v1",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/dev/run_launch_v1.ps1 -SkipNpmAudit",
+      "cwd": "${workspaceFolder}"
+    },
+    {
       "name": "Local Stack: Start",
       "type": "node-terminal",
       "request": "launch",

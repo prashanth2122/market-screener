@@ -5,9 +5,10 @@ from __future__ import annotations
 from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 from sqlalchemy import func, select
 
+from market_screener.api.cache_helpers import build_cache_key, get_api_cache
 from market_screener.core.score_factors import SCORE_MODEL_VERSION
 from market_screener.core.settings import Settings, get_settings
 from market_screener.core.timezone import normalize_to_utc
@@ -27,6 +28,8 @@ router = APIRouter(tags=["assets"])
 
 @router.get("/{symbol}")
 def get_asset_detail(
+    request: Request,
+    response: Response,
     symbol: str,
     model_version: str = Query(default=SCORE_MODEL_VERSION),
     price_source: str | None = Query(default=None),
@@ -36,9 +39,27 @@ def get_asset_detail(
     fundamentals_source: str | None = Query(default=None),
     news_source: str | None = Query(default=None),
     news_limit: int = Query(default=20, ge=1, le=100),
+    no_cache: bool = Query(default=False, description="Bypass API response cache."),
     settings: Settings = Depends(get_settings),
 ) -> dict[str, object]:
     """Return one-symbol detail context for screener drill-down views."""
+
+    if settings.api_cache_enabled and not no_cache:
+        cache = get_api_cache(max_entries=settings.api_cache_max_entries)
+        cache_key = build_cache_key(request, drop_params={"no_cache"})
+        cached = cache.get(cache_key)
+        if cached is not None:
+            response.headers["X-Cache"] = "HIT"
+            response.headers["Cache-Control"] = (
+                f"private, max-age={settings.api_cache_asset_detail_ttl_seconds}"
+            )
+            return cached  # type: ignore[return-value]
+        response.headers["X-Cache"] = "MISS"
+        response.headers["Cache-Control"] = (
+            f"private, max-age={settings.api_cache_asset_detail_ttl_seconds}"
+        )
+    else:
+        response.headers["X-Cache"] = "BYPASS"
 
     normalized_symbol = (symbol or "").strip().upper()
     if not normalized_symbol:
@@ -142,7 +163,7 @@ def get_asset_detail(
             None if latest_fundamentals is None else latest_fundamentals.as_of_ts
         ),
     )
-    return {
+    payload: dict[str, object] = {
         "status": "ok",
         "asset": {
             "symbol": asset.symbol,
@@ -177,6 +198,15 @@ def get_asset_detail(
             "news": len(news_events),
         },
     }
+
+    if settings.api_cache_enabled and not no_cache:
+        cache.set(
+            cache_key,
+            value=payload,
+            ttl_seconds=settings.api_cache_asset_detail_ttl_seconds,
+        )
+
+    return payload
 
 
 def _serialize_signal_row(row: SignalHistory | None) -> dict[str, object] | None:

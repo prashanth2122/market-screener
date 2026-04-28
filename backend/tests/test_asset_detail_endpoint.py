@@ -117,7 +117,7 @@ def test_asset_detail_endpoint_returns_latest_context_and_history(monkeypatch) -
             ScoreHistory(
                 asset_id=asset.id,
                 as_of_ts=as_of,
-                model_version="v1.0.0",
+                model_version="v1.0.1",
                 composite_score=Decimal("81.5"),
                 technical_score=Decimal("79.0"),
                 fundamental_score=Decimal("82.0"),
@@ -128,7 +128,7 @@ def test_asset_detail_endpoint_returns_latest_context_and_history(monkeypatch) -
             SignalHistory(
                 asset_id=asset.id,
                 as_of_ts=as_of,
-                model_version="v1.0.0",
+                model_version="v1.0.1",
                 signal="strong_buy",
                 score=Decimal("81.5"),
                 confidence=Decimal("0.82"),
@@ -228,7 +228,7 @@ def test_asset_detail_endpoint_applies_source_and_limit_filters(monkeypatch) -> 
             SignalHistory(
                 asset_id=asset.id,
                 as_of_ts=as_of,
-                model_version="v1.0.0",
+                model_version="v1.0.1",
                 signal="buy",
                 score=Decimal("74"),
                 confidence=Decimal("0.73"),
@@ -240,7 +240,7 @@ def test_asset_detail_endpoint_applies_source_and_limit_filters(monkeypatch) -> 
             ScoreHistory(
                 asset_id=asset.id,
                 as_of_ts=as_of,
-                model_version="v1.0.0",
+                model_version="v1.0.1",
                 composite_score=Decimal("74"),
             )
         )

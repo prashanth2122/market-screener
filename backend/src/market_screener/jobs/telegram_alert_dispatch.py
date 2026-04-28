@@ -84,6 +84,7 @@ def run_telegram_alert_dispatch(
     job = EmailAlertDispatchJob(
         resolved_session_factory,
         channel=resolved_channel,
+        dispatch_job_name="telegram_alert_dispatch",
         symbol_limit=resolved_settings.alert_dispatch_symbol_limit,
         lookback_hours=resolved_settings.alert_dispatch_lookback_hours,
         min_score=resolved_settings.alert_dispatch_min_score,

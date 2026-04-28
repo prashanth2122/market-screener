@@ -43,7 +43,7 @@ def _seed_row(
             SignalHistory(
                 asset_id=asset.id,
                 as_of_ts=as_of_ts,
-                model_version="v1.0.0",
+                model_version="v1.0.1",
                 signal=signal,
                 score=score,
                 confidence=confidence,
@@ -55,7 +55,7 @@ def _seed_row(
             ScoreHistory(
                 asset_id=asset.id,
                 as_of_ts=as_of_ts,
-                model_version="v1.0.0",
+                model_version="v1.0.1",
                 composite_score=score,
                 technical_score=Decimal("60.0"),
                 fundamental_score=Decimal("65.0"),

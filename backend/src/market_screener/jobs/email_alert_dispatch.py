@@ -70,6 +70,7 @@ class EmailAlertDispatchJob:
         session_factory: SessionFactory,
         *,
         channel: SmtpEmailAlertChannel,
+        dispatch_job_name: str = "email_alert_dispatch",
         symbol_limit: int,
         lookback_hours: int,
         min_score: float,
@@ -77,12 +78,11 @@ class EmailAlertDispatchJob:
         model_version: str,
         max_per_day: int,
         cooldown_minutes: int,
-        recent_send_context_loader: (
-            Callable[[object, datetime, int], tuple[int, set[str]]] | None
-        ) = None,
+        recent_send_context_loader: Callable[..., tuple[int, set[str]]] | None = None,
     ) -> None:
         self._session_factory = session_factory
         self._channel = channel
+        self._dispatch_job_name = (dispatch_job_name or "").strip() or "email_alert_dispatch"
         self._symbol_limit = max(1, symbol_limit)
         self._lookback_hours = max(1, lookback_hours)
         self._min_score = float(min_score)
@@ -151,10 +151,12 @@ class EmailAlertDispatchJob:
                         normalize_to_utc(as_of_ts),
                     )
 
-            sent_today_count, cooldown_symbols = self._recent_send_context_loader(
+            sent_today_count, cooldown_symbols = _invoke_recent_send_loader(
+                self._recent_send_context_loader,
                 session,
                 reference_now,
                 self._cooldown_minutes,
+                self._dispatch_job_name,
             )
 
             skipped_no_signal = 0
@@ -391,6 +393,7 @@ def run_email_alert_dispatch(
     job = EmailAlertDispatchJob(
         resolved_session_factory,
         channel=resolved_channel,
+        dispatch_job_name="email_alert_dispatch",
         symbol_limit=resolved_settings.alert_dispatch_symbol_limit,
         lookback_hours=resolved_settings.alert_dispatch_lookback_hours,
         min_score=resolved_settings.alert_dispatch_min_score,
@@ -444,6 +447,7 @@ def _load_recent_send_context(
     session,
     now_utc: datetime,
     cooldown_minutes: int,
+    dispatch_job_name: str,
 ) -> tuple[int, set[str]]:
     day_start = datetime(now_utc.year, now_utc.month, now_utc.day, tzinfo=UTC)
     cooldown_cutoff = now_utc - timedelta(minutes=cooldown_minutes)
@@ -452,7 +456,7 @@ def _load_recent_send_context(
             session.scalars(
                 select(Job)
                 .where(
-                    Job.job_name == "email_alert_dispatch",
+                    Job.job_name == dispatch_job_name,
                     Job.status == "completed",
                     Job.started_at >= day_start,
                     Job.started_at <= now_utc,
@@ -497,6 +501,20 @@ def _to_float(value: Decimal | None) -> float | None:
     if value is None:
         return None
     return float(value)
+
+
+def _invoke_recent_send_loader(
+    loader: Callable[..., tuple[int, set[str]]],
+    session,
+    now_utc: datetime,
+    cooldown_minutes: int,
+    dispatch_job_name: str,
+) -> tuple[int, set[str]]:
+    try:
+        return loader(session, now_utc, cooldown_minutes, dispatch_job_name)
+    except TypeError:
+        # Backwards compatibility for older 3-arg signature used by some tests.
+        return loader(session, now_utc, cooldown_minutes)
 
 
 def main() -> None:

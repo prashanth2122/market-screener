@@ -17,7 +17,7 @@ from market_screener.core.score_factors import (
 def test_score_component_weights_are_normalized() -> None:
     normalized = normalized_score_component_weights()
 
-    assert SCORE_MODEL_VERSION == "v1.0.0"
+    assert SCORE_MODEL_VERSION == "v1.0.1"
     assert set(normalized.keys()) == set(SCORE_COMPONENT_WEIGHTS.keys())
     assert round(sum(normalized.values()), 6) == 1.0
     assert round(normalized["technical_strength"], 2) == 0.45
@@ -119,7 +119,7 @@ def test_transform_sentiment_event_risk_uses_weighted_fallback_when_normalized_m
 
     assert result.base_sentiment_score is not None
     assert result.score is not None
-    assert round(result.score, 2) == 60.0
+    assert round(result.score, 2) == 64.57
 
 
 def test_transform_sentiment_event_risk_returns_none_when_no_sentiment_inputs() -> None:

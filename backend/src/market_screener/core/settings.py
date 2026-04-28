@@ -176,9 +176,31 @@ class Settings(BaseSettings):
     price_cache_ttl_seconds: int = 60
     news_cache_ttl_seconds: int = 900
     fundamentals_cache_ttl_seconds: int = 86400
+
+    # API response cache (dashboard)
+    api_cache_enabled: bool = True
+    api_cache_max_entries: int = 2000
+    api_cache_screener_ttl_seconds: int = 10
+    api_cache_asset_detail_ttl_seconds: int = 15
     max_stale_price_minutes: int = 15
     max_stale_fundamentals_days: int = 7
     max_stale_news_hours: int = 24
+
+    # DB profiling
+    db_slow_query_log_enabled: bool = True
+    db_slow_query_threshold_ms: int = 250
+    db_slow_query_max_entries: int = 200
+    db_slow_query_max_sql_chars: int = 600
+    db_slow_query_endpoint_enabled: bool = False
+
+    # Daily digest (Day 95)
+    daily_digest_telegram_enabled: bool = True
+    daily_digest_email_enabled: bool = False
+    daily_digest_symbol_limit: int = 50
+    daily_digest_lookback_hours: int = 24
+    daily_digest_signal_allowlist: str | None = None
+    daily_digest_min_score: float | None = None
+    daily_digest_include_blocked_by_risk: bool = False
 
     model_config = SettingsConfigDict(
         env_file=".env",

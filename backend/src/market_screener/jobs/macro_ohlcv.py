@@ -19,8 +19,10 @@ from market_screener.db.session import (
     create_session_factory_from_settings,
 )
 from market_screener.jobs.audit import JobAuditTrail
+from market_screener.jobs.dead_letters import DeadLetterStore
 from market_screener.jobs.idempotency import build_idempotency_key
 from market_screener.jobs.ingestion_adapters import (
+    AdapterNormalizationError,
     MacroAdapterFactory,
     MacroIngestionAdapter,
     build_alpha_vantage_macro_adapter_factory,
@@ -89,6 +91,7 @@ class MacroOhlcvIngestionJob:
         forex_outputsize: str,
         commodity_interval: str,
         failure_store: IngestionFailureStore | None = None,
+        dead_letter_store: DeadLetterStore | None = None,
         trading_calendar: TradingCalendar | None = None,
         symbol_allowlist: set[str] | None = None,
         adapter_factory: MacroAdapterFactory | None = None,
@@ -98,6 +101,7 @@ class MacroOhlcvIngestionJob:
         self._forex_outputsize = forex_outputsize
         self._commodity_interval = commodity_interval
         self._failure_store = failure_store
+        self._dead_letter_store = dead_letter_store
         self._trading_calendar = trading_calendar or TradingCalendar()
         self._symbol_allowlist = (
             {symbol.upper() for symbol in symbol_allowlist} if symbol_allowlist else None
@@ -141,6 +145,53 @@ class MacroOhlcvIngestionJob:
                     continue
                 try:
                     candles = self._fetch_asset_candles(adapter, asset, window_start_date)
+                except AdapterNormalizationError as exc:
+                    payload_type = "fx_daily" if asset.asset_type == "forex" else "commodity_daily"
+                    logger.warning(
+                        "macro_ohlcv_symbol_dead_lettered",
+                        extra={
+                            "symbol": asset.symbol,
+                            "asset_type": asset.asset_type,
+                            "provider": "alpha_vantage",
+                            "error": str(exc),
+                        },
+                    )
+                    if self._dead_letter_store is not None:
+                        dead_letter_key = build_idempotency_key(
+                            "dead_letter",
+                            {
+                                "job_name": "macro_ohlcv_ingestion",
+                                "symbol": asset.symbol,
+                                "asset_type": asset.asset_type,
+                                "provider": "alpha_vantage",
+                                "payload_type": payload_type,
+                                "reason": "normalization_error",
+                                "error": str(exc),
+                            },
+                        )
+                        self._dead_letter_store.record_dead_letter(
+                            dead_letter_key=dead_letter_key,
+                            job_name="macro_ohlcv_ingestion",
+                            asset_symbol=asset.symbol,
+                            provider_name="alpha_vantage",
+                            payload_type=payload_type,
+                            reason="normalization_error",
+                            error_message=str(exc),
+                            payload=exc.payload,
+                            context={
+                                "symbol": asset.symbol,
+                                "asset_type": asset.asset_type,
+                                "provider": "alpha_vantage",
+                                "window_anchor": window_anchor,
+                                "lookback_days": self._lookback_days,
+                                "base_currency": asset.base_currency,
+                                "quote_currency": asset.quote_currency,
+                                "forex_outputsize": self._forex_outputsize,
+                                "commodity_interval": self._commodity_interval,
+                            },
+                        )
+                    failed_symbols += 1
+                    continue
                 except Exception as exc:
                     logger.exception(
                         "macro_ohlcv_symbol_failed",
@@ -246,6 +297,7 @@ def run_macro_ohlcv_ingestion(
         max_attempts=resolved_settings.ingestion_failure_max_attempts,
         retry_backoff_minutes=resolved_settings.ingestion_failure_retry_backoff_minutes,
     )
+    dead_letter_store = DeadLetterStore(resolved_session_factory)
     trading_calendar = TradingCalendar.from_settings(resolved_settings)
     symbol_fingerprint = _active_macro_symbol_fingerprint(resolved_session_factory)
     window_anchor = reference_now.date().isoformat()
@@ -282,6 +334,7 @@ def run_macro_ohlcv_ingestion(
         forex_outputsize=resolved_settings.macro_ohlcv_forex_outputsize,
         commodity_interval=resolved_settings.macro_ohlcv_commodity_interval,
         failure_store=failure_store,
+        dead_letter_store=dead_letter_store,
         trading_calendar=trading_calendar,
     )
     with resolved_audit.track_job_run(

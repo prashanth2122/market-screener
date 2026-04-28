@@ -33,7 +33,7 @@ def _base_inputs() -> CompositeScoreInputs:
 def test_compute_composite_score_returns_weighted_output_with_all_components() -> None:
     result = compute_composite_score(_base_inputs())
 
-    assert result.model_version == "v1.0.0"
+    assert result.model_version == "v1.0.1"
     assert result.score is not None
     assert 70.0 <= result.score <= 95.0
     assert result.unavailable_components == []

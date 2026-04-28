@@ -211,7 +211,7 @@ def test_score_signal_backfill_job_writes_history_rows() -> None:
 
     assert len(score_rows) == 2
     assert len(signal_rows) == 2
-    assert all(row.model_version == "v1.0.0" for row in score_rows)
+    assert all(row.model_version == "v1.0.1" for row in score_rows)
     assert all(row.signal in {"strong_buy", "buy", "watch", "avoid"} for row in signal_rows)
 
 

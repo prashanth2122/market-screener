@@ -38,7 +38,7 @@ def test_build_score_explanation_payload_contains_expected_sections() -> None:
     payload = build_score_explanation_payload(result).payload
 
     assert payload["asset_symbol"] == "AAPL"
-    assert payload["model_version"] == "v1.0.0"
+    assert payload["model_version"] == "v1.0.1"
     assert isinstance(payload["score"], float)
     assert payload["score_band"] in {"high", "constructive", "mixed", "weak", "unavailable"}
     assert 0.2 <= payload["confidence"] <= 1.0

@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from math import exp
 
-SCORE_MODEL_VERSION = "v1.0.0"
+SCORE_MODEL_VERSION = "v1.0.1"
 
 SCORE_COMPONENT_WEIGHTS = {
     "technical_strength": 0.45,
@@ -43,6 +44,21 @@ _EVENT_RISK_PENALTIES = {
     "earnings_warning": 14.0,
     "sentiment_shock": 10.0,
 }
+
+
+@dataclass(frozen=True)
+class TransformProfile:
+    """Tunable parameters for factor transforms (keep weights unchanged).
+
+    Changing these values should bump SCORE_MODEL_VERSION so results stay auditable.
+    """
+
+    confidence_floor: float = 0.40
+    confidence_power: float = 1.20
+    weighted_sentiment_logistic_k: float = 3.0
+
+
+DEFAULT_TRANSFORM_PROFILE = TransformProfile()
 
 
 @dataclass(frozen=True)
@@ -110,11 +126,13 @@ def normalized_score_component_weights(
 
 def transform_technical_strength(
     inputs: TechnicalFactorInputs,
+    *,
+    profile: TransformProfile = DEFAULT_TRANSFORM_PROFILE,
 ) -> TechnicalFactorTransformResult:
     """Transform technical factors into a normalized 0-100 technical score."""
 
-    trend_score = _trend_score(inputs.trend_regime, inputs.trend_confidence)
-    breakout_score = _breakout_score(inputs.breakout_signal, inputs.breakout_confidence)
+    trend_score = _trend_score(inputs.trend_regime, inputs.trend_confidence, profile)
+    breakout_score = _breakout_score(inputs.breakout_signal, inputs.breakout_confidence, profile)
     relative_volume_score = _relative_volume_score(
         inputs.relative_volume_state,
         inputs.relative_volume_ratio,
@@ -170,12 +188,15 @@ def transform_fundamental_quality(fundamentals_quality_score: float | None) -> f
 
 def transform_sentiment_event_risk(
     inputs: SentimentRiskFactorInputs,
+    *,
+    profile: TransformProfile = DEFAULT_TRANSFORM_PROFILE,
 ) -> SentimentRiskTransformResult:
     """Transform sentiment and event-risk inputs into a 0-100 score."""
 
     base_score = _sentiment_base_score(
         inputs.weighted_sentiment,
         inputs.normalized_sentiment_score,
+        profile=profile,
     )
 
     penalty = 0.0
@@ -203,20 +224,24 @@ def transform_sentiment_event_risk(
     )
 
 
-def _trend_score(regime: str | None, confidence: float | None) -> float | None:
+def _trend_score(
+    regime: str | None, confidence: float | None, profile: TransformProfile
+) -> float | None:
     if regime is None:
         return None
     key = regime.strip().lower() or "unknown"
     base = _TREND_BASE_SCORES.get(key, _TREND_BASE_SCORES["unknown"])
-    return _apply_confidence(base, confidence)
+    return _apply_confidence(base, confidence, profile)
 
 
-def _breakout_score(signal: str | None, confidence: float | None) -> float | None:
+def _breakout_score(
+    signal: str | None, confidence: float | None, profile: TransformProfile
+) -> float | None:
     if signal is None:
         return None
     key = signal.strip().lower() or "unknown"
     base = _BREAKOUT_BASE_SCORES.get(key, _BREAKOUT_BASE_SCORES["unknown"])
-    return _apply_confidence(base, confidence)
+    return _apply_confidence(base, confidence, profile)
 
 
 def _relative_volume_score(state: str | None, ratio: float | None) -> float | None:
@@ -245,16 +270,31 @@ def _relative_volume_score(state: str | None, ratio: float | None) -> float | No
 def _sentiment_base_score(
     weighted_sentiment: float | None,
     normalized_sentiment_score: float | None,
+    *,
+    profile: TransformProfile,
 ) -> float | None:
     if normalized_sentiment_score is not None:
         return _clamp(normalized_sentiment_score)
     if weighted_sentiment is None:
         return None
-    return _clamp((weighted_sentiment + 1.0) * 50.0)
+
+    # Logistic mapping keeps mid-range nuanced while bounding extremes.
+    ws = _clamp(weighted_sentiment, -1.0, 1.0)
+    k = max(0.1, float(profile.weighted_sentiment_logistic_k))
+    score = 100.0 / (1.0 + exp(-k * ws))
+    return _clamp(score)
 
 
-def _apply_confidence(base_score: float, confidence: float | None) -> float:
-    normalized_confidence = 0.5 if confidence is None else _clamp(confidence, 0.0, 1.0)
+def _apply_confidence(
+    base_score: float,
+    confidence: float | None,
+    profile: TransformProfile,
+) -> float:
+    raw_confidence = 0.5 if confidence is None else _clamp(confidence, 0.0, 1.0)
+    floor = _clamp(profile.confidence_floor, 0.0, 1.0)
+    shaped = max(0.0, min(1.0, raw_confidence)) ** max(0.1, float(profile.confidence_power))
+    normalized_confidence = floor + (1.0 - floor) * shaped
+
     adjusted = 50.0 + ((base_score - 50.0) * normalized_confidence)
     return _clamp(adjusted)
 

@@ -11,7 +11,7 @@ from sqlalchemy.orm import sessionmaker
 
 from market_screener.alerts.email_channel import EmailAlert, EmailAlertDeliveryResult
 from market_screener.core.settings import Settings
-from market_screener.db.models.core import Asset, SignalHistory
+from market_screener.db.models.core import Asset, Job, SignalHistory
 from market_screener.jobs.audit import JobAuditTrail
 from market_screener.jobs.email_alert_dispatch import (
     EmailAlertDispatchJob,
@@ -76,7 +76,7 @@ def _seed_signal(
             SignalHistory(
                 asset_id=asset.id,
                 as_of_ts=as_of_ts,
-                model_version="v1.0.0",
+                model_version="v1.0.1",
                 signal=signal,
                 score=score,
                 confidence=Decimal("0.80"),
@@ -135,7 +135,7 @@ def test_email_alert_dispatch_job_sends_only_actionable_candidates() -> None:
         lookback_hours=24,
         min_score=70.0,
         allowed_signals={"strong_buy", "buy"},
-        model_version="v1.0.0",
+        model_version="v1.0.1",
         max_per_day=5,
         cooldown_minutes=60,
     )
@@ -197,7 +197,7 @@ def test_email_alert_dispatch_job_applies_cooldown_and_daily_limit() -> None:
         lookback_hours=24,
         min_score=70.0,
         allowed_signals={"buy"},
-        model_version="v1.0.0",
+        model_version="v1.0.1",
         max_per_day=2,
         cooldown_minutes=60,
         recent_send_context_loader=_mock_recent_sends,
@@ -207,6 +207,75 @@ def test_email_alert_dispatch_job_applies_cooldown_and_daily_limit() -> None:
     assert result.sent_alerts == 1
     assert result.skipped_cooldown == 1
     assert result.skipped_daily_limit == 1
+    assert [alert.symbol for alert in channel.alerts] == ["MSFT"]
+
+
+def test_email_alert_dispatch_job_uses_dispatch_job_name_for_cooldown() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Asset.__table__.create(engine)
+    SignalHistory.__table__.create(engine)
+    Job.__table__.create(engine)
+    session_local = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+    now = datetime(2026, 4, 23, 12, 0, tzinfo=UTC)
+
+    _seed_signal(
+        session_local,
+        symbol="AAPL",
+        signal="buy",
+        score=Decimal("80.00"),
+        blocked_by_risk=False,
+        as_of_ts=now - timedelta(hours=1),
+    )
+    _seed_signal(
+        session_local,
+        symbol="MSFT",
+        signal="buy",
+        score=Decimal("81.00"),
+        blocked_by_risk=False,
+        as_of_ts=now - timedelta(hours=1),
+    )
+
+    with session_local() as session:
+        session.add(
+            Job(
+                job_name="telegram_alert_dispatch",
+                run_id="run-telegram-001",
+                idempotency_key=None,
+                status="completed",
+                started_at=now - timedelta(minutes=30),
+                finished_at=now - timedelta(minutes=29),
+                duration_ms=1200,
+                error_message=None,
+                details={
+                    "sent_alerts": [
+                        {
+                            "symbol": "AAPL",
+                            "sent_at": (now - timedelta(minutes=30)).isoformat(),
+                            "as_of_ts": (now - timedelta(hours=1)).isoformat(),
+                        }
+                    ]
+                },
+            )
+        )
+        session.commit()
+
+    channel = _FakeEmailChannel()
+    job = EmailAlertDispatchJob(
+        session_local,
+        channel=channel,
+        dispatch_job_name="telegram_alert_dispatch",
+        symbol_limit=10,
+        lookback_hours=24,
+        min_score=70.0,
+        allowed_signals={"buy"},
+        model_version="v1.0.1",
+        max_per_day=5,
+        cooldown_minutes=60,
+    )
+    result = job.run(now_utc=now)
+
+    assert result.sent_alerts == 1
+    assert result.skipped_cooldown == 1
     assert [alert.symbol for alert in channel.alerts] == ["MSFT"]
 
 

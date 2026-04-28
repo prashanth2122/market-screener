@@ -36,7 +36,7 @@ def test_score_and_signal_history_persist_expected_fields() -> None:
             ScoreHistory(
                 asset_id=asset.id,
                 as_of_ts=as_of,
-                model_version="v1.0.0",
+                model_version="v1.0.1",
                 composite_score=Decimal("74.9721"),
                 technical_score=Decimal("79.9100"),
                 fundamental_score=Decimal("77.5000"),
@@ -48,7 +48,7 @@ def test_score_and_signal_history_persist_expected_fields() -> None:
             SignalHistory(
                 asset_id=asset.id,
                 as_of_ts=as_of,
-                model_version="v1.0.0",
+                model_version="v1.0.1",
                 signal="buy",
                 score=Decimal("74.9721"),
                 confidence=Decimal("0.9100"),
@@ -65,7 +65,7 @@ def test_score_and_signal_history_persist_expected_fields() -> None:
 
     assert score_row is not None
     assert float(score_row.composite_score) == 74.9721
-    assert score_row.model_version == "v1.0.0"
+    assert score_row.model_version == "v1.0.1"
     assert score_row.details == {"unavailable_components": []}
 
     assert signal_row is not None
@@ -98,7 +98,7 @@ def test_score_history_unique_constraint_blocks_duplicates() -> None:
             ScoreHistory(
                 asset_id=asset.id,
                 as_of_ts=as_of,
-                model_version="v1.0.0",
+                model_version="v1.0.1",
                 composite_score=Decimal("69.1200"),
             )
         )
@@ -109,7 +109,7 @@ def test_score_history_unique_constraint_blocks_duplicates() -> None:
             ScoreHistory(
                 asset_id=asset_id,
                 as_of_ts=datetime(2026, 4, 23, 14, 0, tzinfo=UTC),
-                model_version="v1.0.0",
+                model_version="v1.0.1",
                 composite_score=Decimal("70.0000"),
             )
         )
@@ -140,7 +140,7 @@ def test_signal_history_unique_constraint_blocks_duplicates() -> None:
             SignalHistory(
                 asset_id=asset.id,
                 as_of_ts=as_of,
-                model_version="v1.0.0",
+                model_version="v1.0.1",
                 signal="buy",
             )
         )
@@ -151,7 +151,7 @@ def test_signal_history_unique_constraint_blocks_duplicates() -> None:
             SignalHistory(
                 asset_id=asset_id,
                 as_of_ts=datetime(2026, 4, 23, 14, 0, tzinfo=UTC),
-                model_version="v1.0.0",
+                model_version="v1.0.1",
                 signal="watch",
             )
         )
@@ -182,7 +182,7 @@ def test_history_tables_allow_same_timestamp_for_different_model_versions() -> N
                 ScoreHistory(
                     asset_id=asset.id,
                     as_of_ts=as_of,
-                    model_version="v1.0.0",
+                    model_version="v1.0.1",
                     composite_score=Decimal("71.0000"),
                 ),
                 ScoreHistory(
@@ -194,7 +194,7 @@ def test_history_tables_allow_same_timestamp_for_different_model_versions() -> N
                 SignalHistory(
                     asset_id=asset.id,
                     as_of_ts=as_of,
-                    model_version="v1.0.0",
+                    model_version="v1.0.1",
                     signal="buy",
                 ),
                 SignalHistory(

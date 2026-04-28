@@ -1409,3 +1409,273 @@
 - `.vscode/launch.json`
 - `scripts/README.md`
 - `docs/EXECUTION_LOG.md`
+
+## Day 83 - 28 April 2026
+
+- Added a real dead-letter queue table for non-retryable ingestion payload failures (schema/normalization errors).
+- Updated ingestion adapters to attach raw provider payloads to normalization errors for better debugging.
+- Routed adapter normalization failures from equity/crypto/macro OHLCV ingestion into the dead-letter table instead of the retry table.
+- Added a focused test suite + PowerShell helper to validate DLQ routing.
+
+### Artifacts
+
+- `backend/src/market_screener/db/models/core.py`
+- `backend/migrations/versions/20260428_10_dead_letter_payloads.py`
+- `backend/src/market_screener/jobs/dead_letters.py`
+- `backend/src/market_screener/jobs/ingestion_adapters.py`
+- `backend/src/market_screener/jobs/equity_ohlcv.py`
+- `backend/src/market_screener/jobs/crypto_ohlcv.py`
+- `backend/src/market_screener/jobs/macro_ohlcv.py`
+- `backend/tests/test_dead_letter_queue.py`
+- `scripts/dev/run_dead_letter_queue_tests.ps1`
+- `.vscode/launch.json`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 84 - 28 April 2026
+
+- Added a lightweight in-memory TTL cache for hot dashboard API responses (screener + asset detail).
+- Added `X-Cache` and `Cache-Control` headers so cache behavior is observable during local use.
+- Added focused tests and a PowerShell helper to validate caching behavior.
+
+### Artifacts
+
+- `backend/src/market_screener/api/response_cache.py`
+- `backend/src/market_screener/api/cache_helpers.py`
+- `backend/src/market_screener/core/settings.py`
+- `backend/src/market_screener/api/routes/screener.py`
+- `backend/src/market_screener/api/routes/asset_detail.py`
+- `backend/tests/test_api_response_cache.py`
+- `scripts/dev/run_api_cache_tests.ps1`
+- `.vscode/launch.json`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 85 - 28 April 2026
+
+- Added slow-query profiling on the SQLAlchemy engine (threshold-based warning logs + in-memory ring buffer).
+- Cached DB engine creation per DSN so profiling and pooling are effective across requests.
+- Added an optional system endpoint to inspect recent slow queries (`/api/v1/system/slow-queries`, disabled by default).
+- Added a deterministic test that forces a slow SQLite query to validate the profiler wiring.
+
+### Artifacts
+
+- `backend/src/market_screener/db/slow_query_profiler.py`
+- `backend/src/market_screener/db/session.py`
+- `backend/src/market_screener/core/settings.py`
+- `backend/src/market_screener/api/routes/system.py`
+- `backend/tests/test_slow_query_profiler.py`
+- `scripts/dev/run_slow_query_profiler_tests.ps1`
+- `.vscode/launch.json`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 86 - 28 April 2026
+
+- Tuned database indexes for the two hottest API endpoints: screener and asset detail.
+- Added composite indexes to support "latest per asset per model_version" lookups and common detail history queries.
+- Added a metadata smoke test and helper script to prevent accidental index drift.
+
+### Artifacts
+
+- `backend/src/market_screener/db/models/core.py`
+- `backend/migrations/versions/20260428_11_tune_api_indexes.py`
+- `backend/tests/test_index_metadata_smoke.py`
+- `scripts/dev/run_api_index_smoke_tests.ps1`
+- `.vscode/launch.json`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 87 - 28 April 2026
+
+- Added PowerShell backup and restore helpers for the Postgres DB (Docker Compose local stack).
+- Backup writes timestamped dumps to `backups/` on the host and uses `docker cp` to avoid stdout binary issues on Windows.
+- Restore is guarded behind `-Force` and supports optional `-Clean` for `pg_restore --clean --if-exists`.
+
+### Artifacts
+
+- `scripts/dev/run_db_backup.ps1`
+- `scripts/dev/run_db_restore.ps1`
+- `.vscode/launch.json`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 88 - 28 April 2026
+
+- Added a repo-local security checks runner: secret scan for tracked files, `.env` tracking guard, and dependency checks.
+- Backend dependency check uses `python -m pip check` (installed packages consistency).
+- Frontend dependency check uses `npm audit --audit-level=high` (can be skipped with `-SkipNpmAudit`).
+
+### Artifacts
+
+- `scripts/security/scan_secrets.py`
+- `scripts/dev/run_security_checks.ps1`
+- `.vscode/launch.json`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 89 - 28 April 2026
+
+- Added a reliability soak test runner that continuously exercises the core API flows and logs failures/latency to `logs/soak/*.jsonl`.
+- Soak is duration-driven (minutes) so you can run the planned 7-day soak by setting `-DurationMinutes 10080`.
+
+### Artifacts
+
+- `scripts/dev/run_reliability_soak_test.ps1`
+- `.vscode/launch.json`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 90 - 28 April 2026
+
+- Hardened the soak runner with a backend reachability preflight and optional `-FailFast` mode to stop on first error.
+- Added a soak log analyzer that generates a human-readable markdown report (per-endpoint failures + latency percentiles).
+
+### Artifacts
+
+- `scripts/dev/run_reliability_soak_test.ps1`
+- `scripts/soak/analyze_soak.py`
+- `scripts/dev/run_soak_report.ps1`
+- `.vscode/launch.json`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 91 - 28 April 2026
+
+- Started the paper-trading validation loop with a daily journal template and a repeatable screener snapshot export.
+- Snapshot is stored as JSON + CSV + Markdown table under `docs/paper_trading/snapshots/` for later review and metrics.
+
+### Artifacts
+
+- `docs/paper_trading/README.md`
+- `scripts/paper_trading/snapshot_screener.py`
+- `scripts/dev/run_paper_trading_day.ps1`
+- `.vscode/launch.json`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 92 - 28 April 2026
+
+- Added a repeatable Day 92 review generator that turns a saved screener snapshot into a structured "false positives / false negatives" review document.
+- Included a snapshot analyzer that summarizes signal/type mix, risk blocks, and the top-ranked list for faster daily review.
+
+### Artifacts
+
+- `scripts/paper_trading/analyze_snapshot.py`
+- `scripts/dev/run_paper_trading_review.ps1`
+- `backend/tests/test_paper_trading_snapshot_analyzer.py`
+- `.vscode/launch.json`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 93 - 28 April 2026
+
+- Adjusted scoring transforms (not weights): introduced a `TransformProfile` for confidence shaping and weighted-sentiment mapping.
+- Bumped score model version to `v1.0.1` to keep transform changes auditable.
+- Updated tests and added a Day 93 helper script to validate transform behavior quickly.
+
+### Artifacts
+
+- `backend/src/market_screener/core/score_factors.py`
+- `backend/tests/test_score_factor_transforms.py`
+- `backend/tests/test_composite_score_engine.py`
+- `scripts/dev/run_score_transform_profile_checks.ps1`
+- `.vscode/launch.json`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 94 - 28 April 2026
+
+- Tuned alert dispatch hygiene: cooldown and daily-cap evaluation now reads prior sends for the correct dispatch job (email vs telegram).
+- Added a regression test to ensure cooldown logic works end-to-end when historical job rows exist.
+- Added a Day 94 helper script to run the alert gating test suite quickly.
+
+### Artifacts
+
+- `backend/src/market_screener/jobs/email_alert_dispatch.py`
+- `backend/src/market_screener/jobs/telegram_alert_dispatch.py`
+- `backend/tests/test_email_alert_dispatch_job.py`
+- `scripts/dev/run_alert_threshold_cooldown_tests.ps1`
+- `.vscode/launch.json`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 95 - 28 April 2026
+
+- Added a daily digest report job that summarizes the top actionable signals once per day (Telegram by default, optional Email).
+- Digest uses a per-day idempotency key so repeated runs won't resend.
+- Added tests and a Day 95 helper script.
+
+### Artifacts
+
+- `backend/src/market_screener/jobs/daily_digest.py`
+- `backend/src/market_screener/core/settings.py`
+- `backend/src/market_screener/jobs/audit.py`
+- `backend/tests/test_daily_digest_job.py`
+- `scripts/dev/run_daily_digest.ps1`
+- `scripts/dev/run_daily_digest_tests.ps1`
+- `.vscode/launch.json`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 96 - 28 April 2026
+
+- Finalized the personal playbook for using screener signals in a disciplined swing-trading workflow.
+- Documented daily routine, signal meanings, entry/stop/target template, sizing defaults, and review loop guardrails.
+
+### Artifacts
+
+- `docs/PERSONAL_PLAYBOOK.md`
+- `README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 97 - 28 April 2026
+
+- Froze the current score model version (`v1.0.1`) by introducing a model changelog as the single source of truth.
+- Added a guard test that fails if `SCORE_MODEL_VERSION` changes without a corresponding changelog entry.
+
+### Artifacts
+
+- `docs/MODEL_CHANGELOG.md`
+- `backend/tests/test_model_version_changelog.py`
+- `scripts/dev/run_model_version_freeze_checks.ps1`
+- `.vscode/launch.json`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 98 - 28 April 2026
+
+- Added a maintenance + failure recovery runbook for operating the local-first stack.
+
+### Artifacts
+
+- `docs/RUNBOOK.md`
+- `README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 99 - 28 April 2026
+
+- Added a launch checklist and a repeatable final QA runner script that executes the most important quality gates in one command.
+
+### Artifacts
+
+- `docs/LAUNCH_CHECKLIST.md`
+- `scripts/dev/run_final_qa.ps1`
+- `.vscode/launch.json`
+- `scripts/README.md`
+- `README.md`
+- `docs/EXECUTION_LOG.md`
+
+## Day 100 - 28 April 2026
+
+- Launched personal v1: added a concrete launch document and a single-run script that runs final QA then starts the local stack.
+- Documented the daily and weekly operating cadence so the project transitions cleanly into the improvement cycle.
+
+### Artifacts
+
+- `docs/LAUNCH_V1.md`
+- `scripts/dev/run_launch_v1.ps1`
+- `README.md`
+- `.vscode/launch.json`
+- `scripts/README.md`
+- `docs/EXECUTION_LOG.md`

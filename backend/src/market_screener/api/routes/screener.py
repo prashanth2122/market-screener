@@ -5,9 +5,10 @@ from __future__ import annotations
 from decimal import Decimal
 from typing import Literal
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Request, Response
 from sqlalchemy import and_, func, select
 
+from market_screener.api.cache_helpers import build_cache_key, get_api_cache
 from market_screener.core.score_factors import SCORE_MODEL_VERSION
 from market_screener.core.settings import Settings, get_settings
 from market_screener.core.timezone import normalize_to_utc
@@ -27,6 +28,8 @@ _SORT_FIELDS = {
 
 @router.get("")
 def get_screener(
+    request: Request,
+    response: Response,
     asset_types: str | None = Query(
         default=None,
         description="Comma-separated asset types (for example: equity,crypto).",
@@ -58,9 +61,27 @@ def get_screener(
     sort_dir: Literal["asc", "desc"] = Query(default="desc"),
     limit: int = Query(default=50, ge=1, le=200),
     offset: int = Query(default=0, ge=0),
+    no_cache: bool = Query(default=False, description="Bypass API response cache."),
     settings: Settings = Depends(get_settings),
 ) -> dict[str, object]:
     """Return latest screener rows with filtering and pagination."""
+
+    if settings.api_cache_enabled and not no_cache:
+        cache = get_api_cache(max_entries=settings.api_cache_max_entries)
+        cache_key = build_cache_key(request, drop_params={"no_cache"})
+        cached = cache.get(cache_key)
+        if cached is not None:
+            response.headers["X-Cache"] = "HIT"
+            response.headers["Cache-Control"] = (
+                f"private, max-age={settings.api_cache_screener_ttl_seconds}"
+            )
+            return cached  # type: ignore[return-value]
+        response.headers["X-Cache"] = "MISS"
+        response.headers["Cache-Control"] = (
+            f"private, max-age={settings.api_cache_screener_ttl_seconds}"
+        )
+    else:
+        response.headers["X-Cache"] = "BYPASS"
 
     parsed_asset_types = _parse_csv_filter(asset_types)
     parsed_exchanges = _parse_csv_filter(exchanges)
@@ -135,7 +156,7 @@ def get_screener(
         rows = session.execute(ordered_query.limit(limit).offset(offset)).all()
 
     items = [_serialize_row(row) for row in rows]
-    return {
+    payload: dict[str, object] = {
         "status": "ok",
         "model_version": parsed_model_version,
         "filters": {
@@ -159,6 +180,15 @@ def get_screener(
         },
         "items": items,
     }
+
+    if settings.api_cache_enabled and not no_cache:
+        cache.set(
+            cache_key,
+            value=payload,
+            ttl_seconds=settings.api_cache_screener_ttl_seconds,
+        )
+
+    return payload
 
 
 def _parse_csv_filter(value: str | None) -> set[str]:

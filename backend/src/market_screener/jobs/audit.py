@@ -18,6 +18,7 @@ from market_screener.db.session import SessionFactory
 class JobRunHandle:
     """Mutable run context used while a job execution is in progress."""
 
+    job_name: str
     run_id: str
     started_at: datetime
     idempotency_key: str | None = None
@@ -106,6 +107,7 @@ class JobAuditTrail:
         self._persist_new(job_row)
         self._active_runs[run_id] = job_row
         return JobRunHandle(
+            job_name=job_name,
             run_id=run_id,
             started_at=started_at,
             idempotency_key=idempotency_key,
@@ -123,7 +125,7 @@ class JobAuditTrail:
         job_row.details = dict(handle.details)
         self._persist_update(job_row)
         if handle.idempotency_key:
-            self._completed_idempotency.add((job_row.job_name, handle.idempotency_key))
+            self._completed_idempotency.add((handle.job_name, handle.idempotency_key))
 
     def _finish_failed(self, handle: JobRunHandle, error_message: str) -> None:
         job_row = self._active_runs.pop(handle.run_id)

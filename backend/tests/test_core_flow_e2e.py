@@ -76,7 +76,7 @@ def test_core_flow_screener_to_asset_detail_to_watchlist_and_alert_history(monke
                 ScoreHistory(
                     asset_id=aapl.id,
                     as_of_ts=as_of,
-                    model_version="v1.0.0",
+                    model_version="v1.0.1",
                     composite_score=Decimal("82.20"),
                     technical_score=Decimal("80.00"),
                     fundamental_score=Decimal("78.00"),
@@ -93,7 +93,7 @@ def test_core_flow_screener_to_asset_detail_to_watchlist_and_alert_history(monke
                 SignalHistory(
                     asset_id=aapl.id,
                     as_of_ts=as_of,
-                    model_version="v1.0.0",
+                    model_version="v1.0.1",
                     signal="strong_buy",
                     score=Decimal("82.20"),
                     confidence=Decimal("0.83"),
@@ -104,7 +104,7 @@ def test_core_flow_screener_to_asset_detail_to_watchlist_and_alert_history(monke
                 SignalHistory(
                     asset_id=btc.id,
                     as_of_ts=as_of,
-                    model_version="v1.0.0",
+                    model_version="v1.0.1",
                     signal="watch",
                     score=Decimal("61.00"),
                     confidence=Decimal("0.62"),

@@ -19,8 +19,10 @@ from market_screener.db.session import (
     create_session_factory_from_settings,
 )
 from market_screener.jobs.audit import JobAuditTrail
+from market_screener.jobs.dead_letters import DeadLetterStore
 from market_screener.jobs.idempotency import build_idempotency_key
 from market_screener.jobs.ingestion_adapters import (
+    AdapterNormalizationError,
     EquityAdapterFactory,
     build_finnhub_equity_adapter_factory,
 )
@@ -76,6 +78,7 @@ class EquityOhlcvIngestionJob:
         resolution: str,
         lookback_days: int,
         failure_store: IngestionFailureStore | None = None,
+        dead_letter_store: DeadLetterStore | None = None,
         trading_calendar: TradingCalendar | None = None,
         symbol_allowlist: set[str] | None = None,
         adapter_factory: EquityAdapterFactory | None = None,
@@ -84,6 +87,7 @@ class EquityOhlcvIngestionJob:
         self._resolution = resolution
         self._lookback_days = lookback_days
         self._failure_store = failure_store
+        self._dead_letter_store = dead_letter_store
         self._trading_calendar = trading_calendar or TradingCalendar()
         self._symbol_allowlist = (
             {symbol.upper() for symbol in symbol_allowlist} if symbol_allowlist else None
@@ -129,6 +133,48 @@ class EquityOhlcvIngestionJob:
                         from_unix=from_unix,
                         to_unix=to_unix,
                     )
+                except AdapterNormalizationError as exc:
+                    logger.warning(
+                        "equity_ohlcv_symbol_dead_lettered",
+                        extra={
+                            "symbol": asset.symbol,
+                            "provider": "finnhub",
+                            "error": str(exc),
+                        },
+                    )
+                    if self._dead_letter_store is not None:
+                        dead_letter_key = build_idempotency_key(
+                            "dead_letter",
+                            {
+                                "job_name": "equity_ohlcv_ingestion",
+                                "symbol": asset.symbol,
+                                "provider": "finnhub",
+                                "payload_type": "ohlcv_candles",
+                                "reason": "normalization_error",
+                                "error": str(exc),
+                            },
+                        )
+                        self._dead_letter_store.record_dead_letter(
+                            dead_letter_key=dead_letter_key,
+                            job_name="equity_ohlcv_ingestion",
+                            asset_symbol=asset.symbol,
+                            provider_name="finnhub",
+                            payload_type="ohlcv_candles",
+                            reason="normalization_error",
+                            error_message=str(exc),
+                            payload=exc.payload,
+                            context={
+                                "symbol": asset.symbol,
+                                "provider": "finnhub",
+                                "resolution": self._resolution,
+                                "lookback_days": self._lookback_days,
+                                "window_anchor": window_anchor,
+                                "from_unix": from_unix,
+                                "to_unix": to_unix,
+                            },
+                        )
+                    failed_symbols += 1
+                    continue
                 except Exception as exc:
                     logger.exception(
                         "equity_ohlcv_symbol_failed",
@@ -209,6 +255,7 @@ def run_equity_ohlcv_ingestion(
         max_attempts=resolved_settings.ingestion_failure_max_attempts,
         retry_backoff_minutes=resolved_settings.ingestion_failure_retry_backoff_minutes,
     )
+    dead_letter_store = DeadLetterStore(resolved_session_factory)
     trading_calendar = TradingCalendar.from_settings(resolved_settings)
     symbol_fingerprint = _active_equity_symbol_fingerprint(resolved_session_factory)
     window_anchor = reference_now.date().isoformat()
@@ -242,6 +289,7 @@ def run_equity_ohlcv_ingestion(
         resolution=resolved_settings.equity_ohlcv_resolution,
         lookback_days=resolved_settings.equity_ohlcv_lookback_days,
         failure_store=failure_store,
+        dead_letter_store=dead_letter_store,
         trading_calendar=trading_calendar,
     )
     with resolved_audit.track_job_run(

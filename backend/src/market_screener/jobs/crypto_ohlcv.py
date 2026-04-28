@@ -20,8 +20,10 @@ from market_screener.db.session import (
     create_session_factory_from_settings,
 )
 from market_screener.jobs.audit import JobAuditTrail
+from market_screener.jobs.dead_letters import DeadLetterStore
 from market_screener.jobs.idempotency import build_idempotency_key, file_sha256
 from market_screener.jobs.ingestion_adapters import (
+    AdapterNormalizationError,
     AdapterSymbolMappingError,
     CryptoAdapterFactoryBuilder,
     build_coingecko_crypto_adapter_factory,
@@ -121,6 +123,7 @@ class CryptoOhlcvIngestionJob:
         vs_currency: str,
         days: int,
         failure_store: IngestionFailureStore | None = None,
+        dead_letter_store: DeadLetterStore | None = None,
         symbol_allowlist: set[str] | None = None,
         adapter_factory_builder: CryptoAdapterFactoryBuilder | None = None,
     ) -> None:
@@ -129,6 +132,7 @@ class CryptoOhlcvIngestionJob:
         self._vs_currency = vs_currency
         self._days = days
         self._failure_store = failure_store
+        self._dead_letter_store = dead_letter_store
         self._symbol_allowlist = (
             {symbol.upper() for symbol in symbol_allowlist} if symbol_allowlist else None
         )
@@ -168,6 +172,49 @@ class CryptoOhlcvIngestionJob:
                     )
                 except AdapterSymbolMappingError:
                     missing_mapping_symbols += 1
+                    continue
+                except AdapterNormalizationError as exc:
+                    logger.warning(
+                        "crypto_ohlcv_symbol_dead_lettered",
+                        extra={
+                            "symbol": asset.symbol,
+                            "coin_id": coin_id,
+                            "provider": "coingecko",
+                            "error": str(exc),
+                        },
+                    )
+                    if self._dead_letter_store is not None:
+                        dead_letter_key = build_idempotency_key(
+                            "dead_letter",
+                            {
+                                "job_name": "crypto_ohlcv_ingestion",
+                                "symbol": asset.symbol,
+                                "coin_id": coin_id,
+                                "provider": "coingecko",
+                                "payload_type": "ohlcv_candles",
+                                "reason": "normalization_error",
+                                "error": str(exc),
+                            },
+                        )
+                        self._dead_letter_store.record_dead_letter(
+                            dead_letter_key=dead_letter_key,
+                            job_name="crypto_ohlcv_ingestion",
+                            asset_symbol=asset.symbol,
+                            provider_name="coingecko",
+                            payload_type="ohlcv_candles",
+                            reason="normalization_error",
+                            error_message=str(exc),
+                            payload=exc.payload,
+                            context={
+                                "symbol": asset.symbol,
+                                "coin_id": coin_id,
+                                "provider": "coingecko",
+                                "vs_currency": self._vs_currency,
+                                "days": self._days,
+                                "window_anchor": window_anchor,
+                            },
+                        )
+                    failed_symbols += 1
                     continue
                 except Exception as exc:
                     logger.exception(
@@ -251,6 +298,7 @@ def run_crypto_ohlcv_ingestion(
         max_attempts=resolved_settings.ingestion_failure_max_attempts,
         retry_backoff_minutes=resolved_settings.ingestion_failure_retry_backoff_minutes,
     )
+    dead_letter_store = DeadLetterStore(resolved_session_factory)
     symbol_fingerprint = _active_crypto_symbol_fingerprint(resolved_session_factory)
     reference_now = now_utc or datetime.now(UTC)
     if reference_now.tzinfo is None:
@@ -288,6 +336,7 @@ def run_crypto_ohlcv_ingestion(
         vs_currency=resolved_settings.crypto_ohlcv_vs_currency,
         days=resolved_settings.crypto_ohlcv_days,
         failure_store=failure_store,
+        dead_letter_store=dead_letter_store,
     )
     with resolved_audit.track_job_run(
         "crypto_ohlcv_ingestion",

@@ -50,7 +50,7 @@ def test_run_telegram_alert_dispatch_wrapper_skips_repeated_hourly_run() -> None
             SignalHistory(
                 asset_id=asset.id,
                 as_of_ts=now - timedelta(hours=1),
-                model_version="v1.0.0",
+                model_version="v1.0.1",
                 signal="strong_buy",
                 score=Decimal("85.00"),
                 confidence=Decimal("0.80"),
